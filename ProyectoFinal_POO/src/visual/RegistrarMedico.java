@@ -1,14 +1,19 @@
 package visual;
 
 import java.awt.BorderLayout;
+import accesoDatos.GuardarDatos;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import accesoDatos.GuardarDatos;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -110,6 +115,24 @@ public class RegistrarMedico extends JDialog {
 				btnSalir.setActionCommand("Cancel");
 				buttonPane.add(btnSalir);
 			}
+			
+			
 		}
+		btnGuardarMedico.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		     
+		        
+		        String nombre = txtNombreMedico.getText();
+		        String cedula = txtCedulaMedico.getText();
+		        String especialidad = txtEspecialidadMedico.getText();
+		        String disponibilidad = txtDisponibilidadMedico.getText();
+		        
+		        GuardarDatos.insertarDatos(nombre, cedula, especialidad, disponibilidad);
+		        
+		        JOptionPane.showMessageDialog(RegistrarMedico.this, "Médico registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+		    }
+		});
+
 	}
 }
