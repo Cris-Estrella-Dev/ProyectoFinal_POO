@@ -7,10 +7,14 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 public class RegistrarVacunas extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
+	private JButton btnSalir;
+	private JButton btnGuardarVacuna;
 
 	/**
 	 * Launch the application.
@@ -29,25 +33,38 @@ public class RegistrarVacunas extends JDialog {
 	 * Create the dialog.
 	 */
 	public RegistrarVacunas() {
+		setTitle("Registrar vacuna");
 		setBounds(100, 100, 450, 300);
+		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		contentPanel.setLayout(null);
+		{
+			JLabel lblNewLabel = new JLabel("Nombre de la vacuna:");
+			lblNewLabel.setBounds(21, 25, 141, 16);
+			contentPanel.add(lblNewLabel);
+		}
+		{
+			JTextField textField = new JTextField();
+			textField.setBounds(163, 20, 208, 26);
+			contentPanel.add(textField);
+			textField.setColumns(10);
+		}
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
+				btnGuardarVacuna = new JButton("Guardar");
+				btnGuardarVacuna.setActionCommand("OK");
+				buttonPane.add(btnGuardarVacuna);
+				getRootPane().setDefaultButton(btnGuardarVacuna);
 			}
 			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
+				btnSalir = new JButton("Salir");
+				btnSalir.setActionCommand("Cancel");
+				buttonPane.add(btnSalir);
 			}
 		}
 	}
