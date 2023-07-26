@@ -2,12 +2,18 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import accesoDatos.GuardarDatos;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 public class RegistrarVacunas extends JDialog {
@@ -15,7 +21,7 @@ public class RegistrarVacunas extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JButton btnSalir;
 	private JButton btnGuardarVacuna;
-
+	private JTextField textField;
 	/**
 	 * Launch the application.
 	 */
@@ -46,7 +52,7 @@ public class RegistrarVacunas extends JDialog {
 			contentPanel.add(lblNewLabel);
 		}
 		{
-			JTextField textField = new JTextField();
+			 textField = new JTextField();
 			textField.setBounds(163, 20, 208, 26);
 			contentPanel.add(textField);
 			textField.setColumns(10);
@@ -67,6 +73,20 @@ public class RegistrarVacunas extends JDialog {
 				buttonPane.add(btnSalir);
 			}
 		}
+		
+		btnGuardarVacuna.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		     
+		        
+		        String nombre = textField.getText();
+		       
+		        
+		        GuardarDatos.insertarDatosVacuna(nombre);
+		        JOptionPane.showMessageDialog(RegistrarVacunas.this, "Vacuna registrada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+
+		    }
+		});
 	}
 
 }

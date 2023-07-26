@@ -2,12 +2,18 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import accesoDatos.GuardarDatos;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JRadioButton;
 
@@ -85,6 +91,20 @@ public class RegistrarEnfermedades extends JDialog {
 				buttonPane.add(btnSalir);
 			}
 		}
+		
+		btnGuardar.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		     
+		        
+		        String nombre = txtNombreEnfermedad.getText();
+		       String answer = rdbtnSi.getText();
+		        
+		        GuardarDatos.insertarDatosEnfermedad(nombre, answer);
+		        JOptionPane.showMessageDialog(RegistrarEnfermedades.this, "Enfermedad registrada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+
+		    }
+		});
 	}
 
 }
