@@ -8,6 +8,9 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTable;
+import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class ListarVacunas extends JDialog {
 
@@ -33,11 +36,13 @@ public class ListarVacunas extends JDialog {
 	public ListarVacunas() {
 		setTitle("Listar vacunas");
 		setBounds(100, 100, 955, 703);
+		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBackground(new Color(112, 128, 144));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
-		tablaVacunadoDe.setBounds(6, 6, 943, 624);
+		tablaVacunadoDe.setBounds(17, 17, 920, 599);
 		contentPanel.add(tablaVacunadoDe);
 		{
 			JPanel buttonPane = new JPanel();
@@ -51,6 +56,11 @@ public class ListarVacunas extends JDialog {
 			}
 			{
 				JButton btnCancelar = new JButton("CANCELAR");
+				btnCancelar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						dispose();
+					}
+				});
 				btnCancelar.setActionCommand("Cancel");
 				buttonPane.add(btnCancelar);
 			}

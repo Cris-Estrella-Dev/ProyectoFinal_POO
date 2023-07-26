@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 public class HistorialPaciente extends JDialog {
 
@@ -24,6 +25,9 @@ public class HistorialPaciente extends JDialog {
 	private JButton btnVerEnfermedadesCronicas;
 	private JButton btnVerVacunasPaciente;
 	private JButton btnSalir;
+	private ListarEnfermedadesCronicasPaciente listarEnfermedadesCronicasPaciente;
+	private ListarVacunasPaciente listarVacunasPaciente;
+
 
 	/**
 	 * Launch the application.
@@ -42,15 +46,18 @@ public class HistorialPaciente extends JDialog {
 	 * Create the dialog.
 	 */
 	public HistorialPaciente() {
+		setBackground(new Color(112, 128, 144));
 		setTitle("Paciente");
 		setBounds(100, 100, 1157, 775);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBackground(new Color(112, 128, 144));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		{
 			JLabel lblNewLabel = new JLabel("Nombre:");
+			lblNewLabel.setForeground(new Color(255, 255, 255));
 			lblNewLabel.setBounds(347, 28, 61, 16);
 			contentPanel.add(lblNewLabel);
 		}
@@ -60,7 +67,8 @@ public class HistorialPaciente extends JDialog {
 			contentPanel.add(lblNombrePaciente);
 		}
 		{
-			JLabel lblNewLabel_1 = new JLabel("Cedula:");
+			JLabel lblNewLabel_1 = new JLabel("Cédula:");
+			lblNewLabel_1.setForeground(new Color(255, 255, 255));
 			lblNewLabel_1.setBounds(45, 28, 61, 16);
 			contentPanel.add(lblNewLabel_1);
 		}
@@ -71,6 +79,7 @@ public class HistorialPaciente extends JDialog {
 		}
 		{
 			JLabel lblNewLabel_2 = new JLabel("Dirección:");
+			lblNewLabel_2.setForeground(new Color(255, 255, 255));
 			lblNewLabel_2.setBounds(601, 28, 64, 16);
 			contentPanel.add(lblNewLabel_2);
 		}
@@ -80,7 +89,8 @@ public class HistorialPaciente extends JDialog {
 			contentPanel.add(lblDireccionPaciente);
 		}
 		{
-			JLabel lblNewLabel_3 = new JLabel("Telefono:");
+			JLabel lblNewLabel_3 = new JLabel("Teléfono:");
+			lblNewLabel_3.setForeground(new Color(255, 255, 255));
 			lblNewLabel_3.setBounds(916, 28, 64, 16);
 			contentPanel.add(lblNewLabel_3);
 		}
@@ -91,6 +101,7 @@ public class HistorialPaciente extends JDialog {
 		}
 		{
 			JLabel lblNewLabel_4 = new JLabel("HISTORIAL CLINICO");
+			lblNewLabel_4.setForeground(new Color(255, 255, 255));
 			lblNewLabel_4.setBounds(496, 155, 135, 16);
 			contentPanel.add(lblNewLabel_4);
 		}
@@ -102,11 +113,25 @@ public class HistorialPaciente extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				btnVerEnfermedadesCronicas = new JButton("Ver enfermedades cronicas del paciente");
+				btnVerEnfermedadesCronicas.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						listarEnfermedadesCronicasPaciente = new ListarEnfermedadesCronicasPaciente();
+						listarEnfermedadesCronicasPaciente.setModal(true);
+						listarEnfermedadesCronicasPaciente.setVisible(true);
+					}
+				});
 				btnVerEnfermedadesCronicas.setActionCommand("OK");
 				buttonPane.add(btnVerEnfermedadesCronicas);
 			}
 			{
 				btnVerVacunasPaciente = new JButton("Ver vacunas del paciente");
+				btnVerVacunasPaciente.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						listarVacunasPaciente = new ListarVacunasPaciente();
+						listarVacunasPaciente.setModal(true);
+						listarVacunasPaciente.setVisible(true);
+					}
+				});
 				btnVerVacunasPaciente.setActionCommand("OK");
 				buttonPane.add(btnVerVacunasPaciente);
 				getRootPane().setDefaultButton(btnVerVacunasPaciente);

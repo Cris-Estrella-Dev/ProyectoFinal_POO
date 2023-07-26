@@ -8,6 +8,9 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTable;
+import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class ListarEnfermedades extends JDialog {
 
@@ -35,15 +38,17 @@ public class ListarEnfermedades extends JDialog {
 		setBounds(100, 100, 829, 573);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBackground(new Color(112, 128, 144));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		{
 			JPanel panel = new JPanel();
+			panel.setBackground(new Color(112, 128, 144));
 			panel.setBounds(6, 6, 817, 494);
 			contentPanel.add(panel);
 			panel.setLayout(null);
-			tablaEnfermoDe.setBounds(6, 6, 805, 488);
+			tablaEnfermoDe.setBounds(6, 6, 805, 464);
 			panel.add(tablaEnfermoDe);
 		}
 		{
@@ -58,6 +63,11 @@ public class ListarEnfermedades extends JDialog {
 			}
 			{
 				JButton btnCancelar = new JButton("CANCELAR");
+				btnCancelar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						dispose();
+					}
+				});
 				btnCancelar.setActionCommand("Cancel");
 				buttonPane.add(btnCancelar);
 			}

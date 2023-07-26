@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.JRadioButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 public class RegistrarEnfermedades extends JDialog {
 
@@ -42,11 +43,13 @@ public class RegistrarEnfermedades extends JDialog {
 		setBounds(100, 100, 438, 249);
 		getContentPane().setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
+		contentPanel.setBackground(new Color(112, 128, 144));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		{
 			JLabel lblNewLabel = new JLabel("Nombre de la enfermedad:");
+			lblNewLabel.setForeground(new Color(255, 255, 255));
 			lblNewLabel.setBounds(24, 6, 172, 16);
 			contentPanel.add(lblNewLabel);
 		}
@@ -58,16 +61,19 @@ public class RegistrarEnfermedades extends JDialog {
 		}
 		{
 			JLabel lblNewLabel_1 = new JLabel("Crónica:");
+			lblNewLabel_1.setForeground(new Color(255, 255, 255));
 			lblNewLabel_1.setBounds(24, 79, 61, 16);
 			contentPanel.add(lblNewLabel_1);
 		}
 		{
 			rdbtnSi = new JRadioButton("Si");
+			rdbtnSi.setForeground(new Color(255, 255, 255));
 			rdbtnSi.setBounds(104, 75, 51, 23);
 			contentPanel.add(rdbtnSi);
 		}
 		{
 			rdbtnNo = new JRadioButton("No");
+			rdbtnNo.setForeground(new Color(255, 255, 255));
 			rdbtnNo.setBounds(171, 75, 51, 23);
 			contentPanel.add(rdbtnNo);
 		}

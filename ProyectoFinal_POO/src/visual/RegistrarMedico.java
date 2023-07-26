@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 public class RegistrarMedico extends JDialog {
 
@@ -48,11 +49,13 @@ public class RegistrarMedico extends JDialog {
 		setBounds(100, 100, 583, 380);
 		getContentPane().setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
+		contentPanel.setBackground(new Color(112, 128, 144));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		{
-			JLabel lblNewLabel = new JLabel("Cedula:");
+			JLabel lblNewLabel = new JLabel("Cédula:");
+			lblNewLabel.setForeground(new Color(255, 255, 255));
 			lblNewLabel.setBounds(25, 18, 61, 16);
 			contentPanel.add(lblNewLabel);
 		}
@@ -64,6 +67,7 @@ public class RegistrarMedico extends JDialog {
 		}
 		{
 			JLabel lblNombre = new JLabel("Nombre:");
+			lblNombre.setForeground(new Color(255, 255, 255));
 			lblNombre.setBounds(309, 18, 61, 16);
 			contentPanel.add(lblNombre);
 		}
@@ -75,6 +79,7 @@ public class RegistrarMedico extends JDialog {
 		}
 		{
 			JLabel lblNewLabel_1 = new JLabel("Especialidad:");
+			lblNewLabel_1.setForeground(new Color(255, 255, 255));
 			lblNewLabel_1.setBounds(25, 113, 87, 16);
 			contentPanel.add(lblNewLabel_1);
 		}
@@ -86,6 +91,7 @@ public class RegistrarMedico extends JDialog {
 		}
 		{
 			JLabel lblNewLabel_2 = new JLabel("Disponibilidad:");
+			lblNewLabel_2.setForeground(new Color(255, 255, 255));
 			lblNewLabel_2.setBounds(304, 113, 101, 16);
 			contentPanel.add(lblNewLabel_2);
 		}

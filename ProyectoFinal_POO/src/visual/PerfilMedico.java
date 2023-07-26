@@ -12,11 +12,13 @@ import javax.swing.JLabel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
+import java.awt.Color;
 
 public class PerfilMedico extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private final JTable TablaCitasDelMedico = new JTable();
+	private Consultas consultas;
 
 	/**
 	 * Launch the application.
@@ -39,6 +41,7 @@ public class PerfilMedico extends JDialog {
 		setBounds(100, 100, 806, 575);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBackground(new Color(112, 128, 144));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
@@ -64,6 +67,14 @@ public class PerfilMedico extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton btnConsultar = new JButton("CONSULTAR");
+				btnConsultar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						dispose();
+						consultas = new Consultas();
+						consultas.setModal(true);
+						consultas.setVisible(true);
+					}
+				});
 				btnConsultar.setActionCommand("OK");
 				buttonPane.add(btnConsultar);
 				getRootPane().setDefaultButton(btnConsultar);

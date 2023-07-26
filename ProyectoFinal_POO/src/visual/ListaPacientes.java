@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 public class ListaPacientes extends JDialog {
 
@@ -38,17 +39,18 @@ public class ListaPacientes extends JDialog {
 		setBounds(100, 100, 970, 666);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBackground(new Color(112, 128, 144));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
-		tablaPacientes.setBounds(6, 6, 958, 587);
+		tablaPacientes.setBounds(21, 17, 931, 576);
 		contentPanel.add(tablaPacientes);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				btnSeleccionarPaciente = new JButton("Seleccionar");
+				btnSeleccionarPaciente = new JButton("Ver historial clínico del paciente");
 				btnSeleccionarPaciente.setActionCommand("OK");
 				buttonPane.add(btnSeleccionarPaciente);
 				getRootPane().setDefaultButton(btnSeleccionarPaciente);

@@ -34,7 +34,7 @@ public class ListarMedicos extends JDialog {
 	 */
 	public ListarMedicos() {
 		setBackground(new Color(112, 128, 144));
-		setTitle("Listar medicos");
+		setTitle("Listar médicos");
 		setBounds(100, 100, 964, 722);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -42,10 +42,11 @@ public class ListarMedicos extends JDialog {
 		contentPanel.setLayout(null);
 		
 		JPanel panel = new JPanel();
+		panel.setBackground(new Color(112, 128, 144));
 		panel.setBounds(6, 6, 952, 643);
 		contentPanel.add(panel);
 		panel.setLayout(null);
-		TablaMedicos.setBounds(6, 6, 940, 631);
+		TablaMedicos.setBounds(17, 18, 907, 607);
 		panel.add(TablaMedicos);
 		{
 			JPanel buttonPane = new JPanel();
