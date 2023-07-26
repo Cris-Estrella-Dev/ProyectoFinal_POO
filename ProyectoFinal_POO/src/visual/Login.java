@@ -34,6 +34,7 @@ public class Login extends JDialog {
 			dialog.setUndecorated(true);
 			dialog.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
 			dialog.setVisible(true);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -94,6 +95,7 @@ public class Login extends JDialog {
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						dispose();
+						System.exit(0);
 					}
 				});
 				cancelButton.setActionCommand("Cancel");

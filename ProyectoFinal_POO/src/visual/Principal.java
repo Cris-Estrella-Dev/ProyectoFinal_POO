@@ -1,4 +1,5 @@
 package visual;
+import accesoDatos.Conexion;
 
 import java.awt.EventQueue;
 import java.awt.Image;
@@ -18,7 +19,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
-
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 
 public class Principal extends JFrame {
@@ -30,6 +34,7 @@ public class Principal extends JFrame {
 	private HistorialPaciente historialPaciente;
 	private RegistrarEnfermedades registrarEnfermedades;
 	private RegistrarVacunas registrarVacunas;
+	private Login login;
 
 	/**
 	 * Launch the application.
@@ -63,6 +68,49 @@ public class Principal extends JFrame {
         int screenWidth = screenSize.width;
         int screenHeight = screenSize.height;
         
+       
+        
+        Connection conexion = Conexion.obtenerConexion();
+
+        // Verificamos si la conexión se estableció correctamente
+        if (conexion != null) {
+            System.out.println("Conexión establecida correctamente.");
+
+            try {
+                // Creamos la sentencia SQL para insertar un registro en una tabla
+                String sql = "INSERT INTO vacuna (nombre) VALUES (?)";
+                PreparedStatement statement = conexion.prepareStatement(sql);
+
+                // Aquí asignamos los valores para los campos que queremos insertar
+                statement.setString(1, "vacunisimo");
+               
+
+                // Ejecutamos la sentencia SQL
+                int filasInsertadas = statement.executeUpdate();
+
+                if (filasInsertadas > 0) {
+                    System.out.println("Registro insertado correctamente.");
+                } else {
+                    System.out.println("No se pudo insertar el registro.");
+                }
+
+                // Cerramos el statement
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    // Cerramos la conexión
+                    conexion.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            System.out.println("Error al establecer la conexión.");
+        }
+        
+        
 
         setBounds(0, 0, screenWidth, screenHeight);
 
@@ -76,7 +124,7 @@ public class Principal extends JFrame {
 		historialPaciente = new HistorialPaciente();
 		registrarEnfermedades = new RegistrarEnfermedades();
 		registrarVacunas =  new RegistrarVacunas();
-	
+		login = new Login();
 		
 		
 		
@@ -94,8 +142,9 @@ public class Principal extends JFrame {
 		JPanel panelMedico = new JPanel();
 		panelMedico.addMouseListener(new PanelButtonMouseAdapter(panelMedico) {
 			public void mouseClicked(MouseEvent e) {
-				registrarMedico.setVisible(true);
 				registrarMedico.setModal(true);
+				registrarMedico.setVisible(true);
+				
 			}
 		});
 		panelMedico.setBackground(new Color(112, 128, 144));
@@ -116,8 +165,9 @@ public class Principal extends JFrame {
 		JPanel panelPaciente = new JPanel();
 		panelPaciente.addMouseListener(new PanelButtonMouseAdapter(panelPaciente) {
 			public void mouseClicked(MouseEvent e) {
-				historialPaciente.setVisible(true);
 				historialPaciente.setModal(true);
+				historialPaciente.setVisible(true);
+				
 			}
 		});
 		panelPaciente.setBackground(new Color(112, 128, 144));
@@ -138,8 +188,9 @@ public class Principal extends JFrame {
 		JPanel panelRegEnfermedad = new JPanel();
 		panelRegEnfermedad.addMouseListener(new PanelButtonMouseAdapter(panelRegEnfermedad) {
 			public void mouseClicked(MouseEvent e) {
-				registrarEnfermedades.setVisible(true);
 				registrarEnfermedades.setModal(true);
+				registrarEnfermedades.setVisible(true);
+				
 			}
 		});
 		panelRegEnfermedad.setBackground(new Color(112, 128, 144));
@@ -160,8 +211,9 @@ public class Principal extends JFrame {
 		JPanel panelRegVacuna = new JPanel();
 		panelRegVacuna.addMouseListener(new PanelButtonMouseAdapter(panelRegVacuna) {
 			public void mouseClicked(MouseEvent e) {
-				registrarVacunas.setVisible(true);
 				registrarVacunas.setModal(true);
+				registrarVacunas.setVisible(true);
+				
 			}
 		});
 		panelRegVacuna.setBackground(new Color(112, 128, 144));
@@ -181,9 +233,7 @@ public class Principal extends JFrame {
 		
 		JPanel panelAdministracion = new JPanel();
 		panelAdministracion.addMouseListener(new PanelButtonMouseAdapter(panelAdministracion) {
-			public void mouseClicked(MouseEvent e) {
-				
-			}
+		
 		});
 		panelAdministracion.setBackground(new Color(112, 128, 144));
 		panelAdministracion.setBounds(6, 888, 249, 58);
@@ -200,22 +250,12 @@ public class Principal extends JFrame {
 		panelAdministracion.add(lblNewLabel_6);
 		lblNewLabel_6.setForeground(new Color(255, 255, 255));
 		
-		JButton btnSalir = new JButton("SALIR");
-		btnSalir.setBackground(new Color(112, 128, 144));
-		btnSalir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				dispose();
-			}
-		});
-		btnSalir.setForeground(new Color(0, 0, 0));
-		btnSalir.setBounds(74, 1035, 115, 29);
-		panelMenu.add(btnSalir);
-		
 		JPanel panelRegCita = new JPanel();
 		panelRegCita.addMouseListener(new PanelButtonMouseAdapter(panelRegCita) {
 			public void mouseClicked(MouseEvent e) {
-				registrarCita.setVisible(true);
 				registrarCita.setModal(true);
+				registrarCita.setVisible(true);
+				
 			}
 		});
 		
@@ -235,10 +275,47 @@ public class Principal extends JFrame {
 		panelRegCita.add(lblNewLabel);
 		lblNewLabel.setForeground(new Color(255, 255, 255));
 		
+		JPanel panelCerrarSesion = new JPanel();
+		panelCerrarSesion.setBackground(new Color(112, 128, 144));
+		panelCerrarSesion.setBounds(6, 1021, 249, 58);
+		panelMenu.add(panelCerrarSesion);
+		panelCerrarSesion.setLayout(null);
+		panelCerrarSesion.addMouseListener(new PanelButtonMouseAdapter(panelCerrarSesion) {
+
+				public void mouseClicked(MouseEvent e) {
+					login.setModal(true);
+					login.setVisible(true);
+					
+				}
+			
+		});
+		
+		JLabel lblCerrarSesion = new JLabel("");
+		lblCerrarSesion.setBounds(19, -22, 41, 80);
+		panelCerrarSesion.add(lblCerrarSesion);
+		lblCerrarSesion.setIcon(new ImageIcon("/Users/cristianbenelyon/git/ProyectoFinal_POO/ProyectoFinal_POO/imagenes/icons8-salida-35.png"));
+		
+		JLabel lblNewLabel_8 = new JLabel("CERRAR SESION");
+		lblNewLabel_8.setForeground(new Color(255, 255, 255));
+		lblNewLabel_8.setBounds(77, 6, 134, 24);
+		panelCerrarSesion.add(lblNewLabel_8);
+		
 		JLabel lblNewLabel_1 = new JLabel("");
 		lblNewLabel_1.setBounds(778, 293, 512, 417);
 		contentPane.add(lblNewLabel_1);
 		lblNewLabel_1.setIcon(new ImageIcon("/Users/cristianbenelyon/git/ProyectoFinal_POO/ProyectoFinal_POO/imagenes/Copia de logoSunny.png"));
+		
+		JLabel lblNewLabel_7 = new JLabel("");
+		lblNewLabel_7.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				dispose();
+				System.exit(0);
+			}
+		});
+		lblNewLabel_7.setBounds(1688, 6, 20, 38);
+		contentPane.add(lblNewLabel_7);
+		lblNewLabel_7.setIcon(new ImageIcon("/Users/cristianbenelyon/git/ProyectoFinal_POO/ProyectoFinal_POO/imagenes/icons8-x-20.png"));
 	
 	}
 	

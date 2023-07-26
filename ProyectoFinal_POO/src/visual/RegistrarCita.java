@@ -10,6 +10,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class RegistrarCita extends JDialog {
 
@@ -20,6 +22,7 @@ public class RegistrarCita extends JDialog {
 	private JTextField txtDireccionPaciente;
 	private JComboBox cbxEspecialistas;
 	private JTextField txtFechaCita;
+	private JTextField txtIDmedico;
 
 	/**
 	 * Launch the application.
@@ -110,6 +113,12 @@ public class RegistrarCita extends JDialog {
 			txtFechaCita.setColumns(10);
 		}
 		{
+			txtIDmedico = new JTextField();
+			txtIDmedico.setBounds(18, 241, 61, 26);
+			contentPanel.add(txtIDmedico);
+			txtIDmedico.setColumns(10);
+		}
+		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -121,6 +130,11 @@ public class RegistrarCita extends JDialog {
 			}
 			{
 				JButton btnSalir = new JButton("Salir");
+				btnSalir.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						dispose();
+					}
+				});
 				btnSalir.setActionCommand("Cancel");
 				buttonPane.add(btnSalir);
 			}

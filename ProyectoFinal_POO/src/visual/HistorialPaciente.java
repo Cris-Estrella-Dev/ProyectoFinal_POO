@@ -115,6 +115,7 @@ public class HistorialPaciente extends JDialog {
 				btnSalir = new JButton("Salir");
 				btnSalir.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
+						dispose();
 					}
 				});
 				btnSalir.setActionCommand("Cancel");
