@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -31,7 +32,7 @@ public class RegistrarCita extends JDialog {
 	private JTextField txtFechaCita;
 	private JTextField txtidmedico;
 	private JButton btnGuardarCita;
-
+	private String[] opciones;
 	/**
 	 * Launch the application.
 	 */
@@ -112,7 +113,10 @@ public class RegistrarCita extends JDialog {
 			contentPanel.add(lblNewLabel_4);
 		}
 		{
-			cbxEspecialistas = new JComboBox();
+			String[] opciones = {"Opcion de prueba", "Opcion de prueba", "Opcion de prueba"};
+
+			DefaultComboBoxModel<String> comboBoxModel =  new DefaultComboBoxModel<>(opciones);
+			cbxEspecialistas = new JComboBox(comboBoxModel);
 			cbxEspecialistas.setBounds(99, 171, 179, 27);
 			contentPanel.add(cbxEspecialistas);
 		}
@@ -185,6 +189,7 @@ public class RegistrarCita extends JDialog {
 		txtDireccionPaciente.setText("");
 		txtFechaCita.setText("");
 		txtTelefonoPaciente.setText("");
+		cbxEspecialistas.setSelectedIndex(-1);
 		
 		
 	}
