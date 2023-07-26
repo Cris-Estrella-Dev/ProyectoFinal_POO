@@ -2,12 +2,18 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import accesoDatos.GuardarDatos;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
@@ -23,6 +29,8 @@ public class RegistrarCita extends JDialog {
 	private JTextField txtDireccionPaciente;
 	private JComboBox cbxEspecialistas;
 	private JTextField txtFechaCita;
+	private JTextField txtidmedico;
+	private JButton btnGuardarCita;
 
 	/**
 	 * Launch the application.
@@ -120,17 +128,18 @@ public class RegistrarCita extends JDialog {
 			contentPanel.add(txtFechaCita);
 			txtFechaCita.setColumns(10);
 		}
+		
+		txtidmedico = new JTextField();
+		txtidmedico.setBounds(28, 210, 61, 26);
+		contentPanel.add(txtidmedico);
+		txtidmedico.setColumns(10);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton btnGuardarCita = new JButton("Guardar");
-				btnGuardarCita.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						clearTxt();
-					}
-				});
+
+				btnGuardarCita = new JButton("Guardar");
 				btnGuardarCita.setActionCommand("OK");
 				buttonPane.add(btnGuardarCita);
 				getRootPane().setDefaultButton(btnGuardarCita);
@@ -146,6 +155,27 @@ public class RegistrarCita extends JDialog {
 				buttonPane.add(btnSalir);
 			}
 		}
+		
+		
+		btnGuardarCita.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		     
+		        
+		        String cedula = txtCedulaPaciente.getText();
+		        String nombre = txtNombrePaciente.getText();
+		        String telefono = txtTelefonoPaciente.getText();
+		        String direccion = txtDireccionPaciente.getText();
+		        String fecha = txtFechaCita.getText();
+		        int idmedico = Integer.parseInt(txtidmedico.getText());
+		       
+		        
+		        GuardarDatos.insertarDatosCita(cedula, nombre, telefono, direccion, fecha, idmedico);
+		        JOptionPane.showMessageDialog(RegistrarCita.this, "Cita registrada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+
+		    }
+		});
+		
 	}
 	
 	public void clearTxt() {
@@ -158,5 +188,9 @@ public class RegistrarCita extends JDialog {
 		
 		
 	}
+	
+	
+		
+		
+	}
 
-}

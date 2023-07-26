@@ -2,11 +2,17 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import accesoDatos.GuardarDatos;
+
 import javax.swing.JTable;
 import java.awt.Color;
 import java.awt.event.ActionListener;
@@ -16,6 +22,7 @@ public class ListarVacunas extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private final JTable tablaVacunadoDe = new JTable();
+	private JButton btnAddVacuna;
 
 	/**
 	 * Launch the application.
@@ -49,10 +56,11 @@ public class ListarVacunas extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton btnAddVacuna = new JButton("AÑADIR");
+				btnAddVacuna = new JButton("AÑADIR");
 				btnAddVacuna.setActionCommand("OK");
 				buttonPane.add(btnAddVacuna);
 				getRootPane().setDefaultButton(btnAddVacuna);
+				
 			}
 			{
 				JButton btnCancelar = new JButton("CANCELAR");
@@ -63,8 +71,11 @@ public class ListarVacunas extends JDialog {
 				});
 				btnCancelar.setActionCommand("Cancel");
 				buttonPane.add(btnCancelar);
+				
 			}
+			
 		}
+		
 	}
 
 }
