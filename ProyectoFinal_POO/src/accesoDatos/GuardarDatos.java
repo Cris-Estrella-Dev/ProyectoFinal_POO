@@ -2,6 +2,7 @@ package accesoDatos;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
@@ -214,4 +215,79 @@ public class GuardarDatos {
 
         
     }
+    
+    public static void insertarDatosUsuario(String identificacion, String clave, String tipoUsuario) {
+        Connection conexion = Conexion.obtenerConexion();
+
+        if (conexion != null) {
+            try {
+                String sql = "INSERT INTO Usuarios (identificacion, clave, tipo_usuario) VALUES (?, ?, ?)";
+                PreparedStatement statement = conexion.prepareStatement(sql);
+
+                statement.setString(1, identificacion);
+                statement.setString(2, clave);
+                statement.setString(3, tipoUsuario);
+
+                int filasInsertadas = statement.executeUpdate();
+
+                if (filasInsertadas > 0) {
+                    System.out.println("Usuario registrado correctamente.");
+                } else {
+                    System.out.println("No se pudo registrar el usuario.");
+                }
+
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    conexion.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            System.out.println("Error al establecer la conexión.");
+        }
+    }
+    
+ // Método para verificar el inicio de sesión
+    public static boolean verificarInicioSesion(String identificacion, String clave, String tipoUsuario) {
+        Connection conexion = Conexion.obtenerConexion();
+        boolean inicioSesionCorrecto = false;
+
+        if (conexion != null) {
+            try {
+                String sql = "SELECT * FROM Usuarios WHERE identificacion = ? AND clave = ? AND tipo_usuario = ?";
+                PreparedStatement statement = conexion.prepareStatement(sql);
+
+                statement.setString(1, identificacion);
+                statement.setString(2, clave);
+                statement.setString(3, tipoUsuario);
+
+                ResultSet resultSet = statement.executeQuery();
+
+                if (resultSet.next()) {
+                    inicioSesionCorrecto = true;
+                }
+
+                resultSet.close();
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    conexion.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            System.out.println("Error al establecer la conexión.");
+        }
+
+        return inicioSesionCorrecto;
+    }
+    
+
 }
