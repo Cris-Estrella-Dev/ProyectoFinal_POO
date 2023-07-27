@@ -17,6 +17,7 @@ public class ListaPacientes extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private final JTable tablaPacientes = new JTable();
 	private JButton btnSeleccionarPaciente;
+	private HistorialPaciente historialPaciente;
 
 	/**
 	 * Launch the application.
@@ -51,6 +52,12 @@ public class ListaPacientes extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				btnSeleccionarPaciente = new JButton("Ver historial clínico del paciente");
+				btnSeleccionarPaciente.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						historialPaciente =  new HistorialPaciente();
+						historialPaciente.setVisible(true);
+					}
+				});
 				btnSeleccionarPaciente.setActionCommand("OK");
 				buttonPane.add(btnSeleccionarPaciente);
 				getRootPane().setDefaultButton(btnSeleccionarPaciente);
