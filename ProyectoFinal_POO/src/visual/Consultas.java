@@ -47,7 +47,7 @@ public class Consultas extends JDialog {
 	 */
 	public Consultas() {
 		setTitle("Consultas");
-		setBounds(100, 100, 1254, 844);
+		setBounds(100, 100, 1247, 617);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBackground(new Color(112, 128, 144));
@@ -101,98 +101,98 @@ public class Consultas extends JDialog {
 		{
 			JLabel lblNewLabel_1 = new JLabel("EDAD:");
 			lblNewLabel_1.setForeground(new Color(255, 255, 255));
-			lblNewLabel_1.setBounds(37, 227, 46, 16);
+			lblNewLabel_1.setBounds(37, 159, 46, 16);
 			contentPanel.add(lblNewLabel_1);
 		}
 		
 		txtEdadPaciente = new JTextField();
-		txtEdadPaciente.setBounds(95, 222, 152, 26);
+		txtEdadPaciente.setBounds(84, 154, 46, 26);
 		contentPanel.add(txtEdadPaciente);
 		txtEdadPaciente.setColumns(10);
 		
 		JLabel lblNewLabel_2 = new JLabel("SEXO:");
 		lblNewLabel_2.setForeground(new Color(255, 255, 255));
-		lblNewLabel_2.setBounds(290, 227, 40, 16);
+		lblNewLabel_2.setBounds(648, 244, 40, 16);
 		contentPanel.add(lblNewLabel_2);
 		
 		JRadioButton rdbtnSexoMasculino = new JRadioButton("M");
 		rdbtnSexoMasculino.setForeground(new Color(255, 255, 255));
-		rdbtnSexoMasculino.setBounds(351, 220, 46, 23);
+		rdbtnSexoMasculino.setBounds(700, 240, 46, 23);
 		contentPanel.add(rdbtnSexoMasculino);
 		
 		JRadioButton rdbtnSexoFemenino = new JRadioButton("F");
 		rdbtnSexoFemenino.setForeground(new Color(255, 255, 255));
-		rdbtnSexoFemenino.setBounds(412, 220, 46, 23);
+		rdbtnSexoFemenino.setBounds(758, 240, 46, 23);
 		contentPanel.add(rdbtnSexoFemenino);
 		
 		JLabel lblNewLabel_3 = new JLabel("ALERGICO A:");
 		lblNewLabel_3.setForeground(new Color(255, 255, 255));
-		lblNewLabel_3.setBounds(540, 224, 85, 16);
+		lblNewLabel_3.setBounds(648, 159, 85, 16);
 		contentPanel.add(lblNewLabel_3);
 		
 		txtAlergicoA = new JTextField();
-		txtAlergicoA.setBounds(631, 207, 212, 63);
+		txtAlergicoA.setBounds(865, 154, 212, 26);
 		contentPanel.add(txtAlergicoA);
 		txtAlergicoA.setColumns(10);
 		
 		JLabel lblNewLabel_4 = new JLabel("ANTECEDENTES PATOLOGICOS:");
 		lblNewLabel_4.setForeground(new Color(255, 255, 255));
-		lblNewLabel_4.setBounds(855, 217, 205, 36);
+		lblNewLabel_4.setBounds(648, 197, 205, 36);
 		contentPanel.add(lblNewLabel_4);
 		
 		txtAntecedentesPatologicos = new JTextField();
-		txtAntecedentesPatologicos.setBounds(1056, 200, 192, 70);
+		txtAntecedentesPatologicos.setBounds(864, 202, 192, 26);
 		contentPanel.add(txtAntecedentesPatologicos);
 		txtAntecedentesPatologicos.setColumns(10);
 		
 		JLabel lblNewLabel_5 = new JLabel("SUFRE DE ALGO:");
 		lblNewLabel_5.setForeground(new Color(255, 255, 255));
-		lblNewLabel_5.setBounds(25, 399, 114, 16);
+		lblNewLabel_5.setBounds(37, 207, 114, 16);
 		contentPanel.add(lblNewLabel_5);
 		
 		txtSufreDeAlgo = new JTextField();
-		txtSufreDeAlgo.setBounds(135, 372, 195, 61);
+		txtSufreDeAlgo.setBounds(145, 197, 195, 36);
 		contentPanel.add(txtSufreDeAlgo);
 		txtSufreDeAlgo.setColumns(10);
 		
 		JLabel lblNewLabel_6 = new JLabel("OPERADO DE:");
 		lblNewLabel_6.setForeground(new Color(255, 255, 255));
-		lblNewLabel_6.setBounds(540, 399, 100, 16);
+		lblNewLabel_6.setBounds(37, 264, 100, 16);
 		contentPanel.add(lblNewLabel_6);
 		
 		txtOperadoDe = new JTextField();
-		txtOperadoDe.setBounds(635, 372, 208, 70);
+		txtOperadoDe.setBounds(133, 259, 208, 26);
 		contentPanel.add(txtOperadoDe);
 		txtOperadoDe.setColumns(10);
 		
 		JLabel lblNewLabel_7 = new JLabel("HABITOS TOXICOS:");
 		lblNewLabel_7.setForeground(new Color(255, 255, 255));
-		lblNewLabel_7.setBounds(874, 399, 126, 16);
+		lblNewLabel_7.setBounds(37, 324, 126, 16);
 		contentPanel.add(lblNewLabel_7);
 		
 		txtHabitosToxicos = new JTextField();
-		txtHabitosToxicos.setBounds(1000, 372, 248, 70);
+		txtHabitosToxicos.setBounds(162, 319, 248, 26);
 		contentPanel.add(txtHabitosToxicos);
 		txtHabitosToxicos.setColumns(10);
 		
 		JLabel lblNewLabel_8 = new JLabel("MOTIVO DE LA CITA:");
 		lblNewLabel_8.setForeground(new Color(255, 255, 255));
-		lblNewLabel_8.setBounds(25, 624, 138, 16);
+		lblNewLabel_8.setBounds(648, 295, 138, 16);
 		contentPanel.add(lblNewLabel_8);
 		
 		txtMotivoCita = new JTextField();
-		txtMotivoCita.setBounds(160, 558, 463, 169);
+		txtMotivoCita.setBounds(814, 264, 271, 170);
 		contentPanel.add(txtMotivoCita);
 		txtMotivoCita.setColumns(10);
 		
 		JLabel lblNewLabel_9 = new JLabel("VACUNADO DE:");
 		lblNewLabel_9.setForeground(new Color(255, 255, 255));
-		lblNewLabel_9.setBounds(874, 558, 108, 16);
+		lblNewLabel_9.setBounds(37, 381, 108, 16);
 		contentPanel.add(lblNewLabel_9);
 		
 		JLabel lblNewLabel_10 = new JLabel("ENFERMO DE:");
 		lblNewLabel_10.setForeground(new Color(255, 255, 255));
-		lblNewLabel_10.setBounds(874, 624, 91, 16);
+		lblNewLabel_10.setBounds(37, 424, 91, 16);
 		contentPanel.add(lblNewLabel_10);
 		
 		JButton btnListaVacunas = new JButton("VER VACUNAS");
@@ -203,7 +203,7 @@ public class Consultas extends JDialog {
 				listarVacunas.setVisible(true);
 			}
 		});
-		btnListaVacunas.setBounds(1000, 553, 117, 29);
+		btnListaVacunas.setBounds(145, 376, 117, 29);
 		contentPanel.add(btnListaVacunas);
 		
 		JButton btnVerListaEnfermedades = new JButton("VER ENFERMEDADES");
@@ -214,16 +214,16 @@ public class Consultas extends JDialog {
 				listarEnfermedades.setVisible(true);
 			}
 		});
-		btnVerListaEnfermedades.setBounds(1000, 619, 159, 29);
+		btnVerListaEnfermedades.setBounds(119, 419, 159, 29);
 		contentPanel.add(btnVerListaEnfermedades);
 		
 		JLabel lblNewLabel_11 = new JLabel("DERIVAR A UN ESPECIALISTA:");
 		lblNewLabel_11.setForeground(new Color(255, 255, 255));
-		lblNewLabel_11.setBounds(868, 700, 192, 16);
+		lblNewLabel_11.setBounds(37, 470, 192, 16);
 		contentPanel.add(lblNewLabel_11);
 		
 		txtDerivarEspecialista = new JTextField();
-		txtDerivarEspecialista.setBounds(1066, 695, 182, 26);
+		txtDerivarEspecialista.setBounds(228, 465, 182, 26);
 		contentPanel.add(txtDerivarEspecialista);
 		txtDerivarEspecialista.setColumns(10);
 		{
