@@ -8,24 +8,52 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import accesoDatos.GuardarDatos;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import javax.swing.JPasswordField;
 
 public class RegistrarUsuario extends JDialog {
 
+	public JComboBox getCbxTipoUsuario() {
+		return cbxTipoUsuario;
+	}
+
+	public void setCbxTipoUsuario(JComboBox cbxTipoUsuario) {
+		this.cbxTipoUsuario = cbxTipoUsuario;
+	}
+
+	public JTextField getTxtIdentificacion() {
+		return txtIdentificacion;
+	}
+
+	public void setTxtIdentificacion(JTextField txtIdentificacion) {
+		this.txtIdentificacion = txtIdentificacion;
+	}
+
+	public JPasswordField getTxtClave() {
+		return txtClave;
+	}
+
+	public void setTxtClave(JPasswordField txtClave) {
+		this.txtClave = txtClave;
+	}
 	private final JPanel contentPanel = new JPanel();
 	private JButton btnCancelar;
 	private JButton btnRegistrarse;
 	private JComboBox cbxTipoUsuario;
-	private JTextField txtClave;
 	private JTextField txtIdentificacion;
 	private Login logIn;
 	private String[] opciones;
 	private JLabel lblNewLabel_3;
+	private JPasswordField txtClave;
 
 	/**
 	 * Launch the application.
@@ -82,15 +110,14 @@ public class RegistrarUsuario extends JDialog {
 		lblNewLabel_2.setBounds(280, 199, 61, 16);
 		contentPanel.add(lblNewLabel_2);
 		
-		txtClave = new JTextField();
-		txtClave.setBounds(427, 194, 195, 26);
-		contentPanel.add(txtClave);
-		txtClave.setColumns(10);
-		
 		lblNewLabel_3 = new JLabel("REGISTRAR USUARIO");
 		lblNewLabel_3.setForeground(new Color(255, 255, 255));
 		lblNewLabel_3.setBounds(266, 17, 138, 16);
 		contentPanel.add(lblNewLabel_3);
+		
+		txtClave = new JPasswordField();
+		txtClave.setBounds(427, 194, 195, 26);
+		contentPanel.add(txtClave);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setBackground(new Color(173, 216, 230));
@@ -100,7 +127,14 @@ public class RegistrarUsuario extends JDialog {
 				btnRegistrarse = new JButton("Registrarse");
 				btnRegistrarse.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						clearTxt();
+						 String identificacion = txtIdentificacion.getText();
+		                    String clave = new String(txtClave.getPassword());
+		                    String tipoUsuario = cbxTipoUsuario.getSelectedItem().toString();
+
+		                    GuardarDatos.insertarDatosUsuario(identificacion, clave, tipoUsuario);
+		                    JOptionPane.showMessageDialog(RegistrarUsuario.this, "Usuario registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+		                    clearTxt();
 					}
 				});
 				btnRegistrarse.setActionCommand("OK");

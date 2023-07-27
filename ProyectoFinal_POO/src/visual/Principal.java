@@ -11,7 +11,11 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 
 import javax.swing.JButton;
@@ -35,6 +39,14 @@ public class Principal extends JFrame {
 	private RegistrarEnfermedades registrarEnfermedades;
 	private RegistrarVacunas registrarVacunas;
 	private Login login;
+	private RegistrarUsuario registrarUsuario;
+	private JPanel panelRegCita;
+	private JPanel panelMedico;
+	private JPanel panelPaciente;
+	private JPanel panelRegEnfermedad;
+	private JPanel panelRegVacuna;
+	private JPanel panelAdministracion;
+	private String tipoUsuarioActual;
 
 	/**
 	 * Launch the application.
@@ -43,10 +55,10 @@ public class Principal extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Principal frame = new Principal();
-					frame.setUndecorated(true);
-					frame.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
-					frame.setVisible(true);
+					Login login = new Login();
+					login.setUndecorated(true);
+					login.setModal(true);
+					login.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -54,10 +66,14 @@ public class Principal extends JFrame {
 		});
 	}
 
+	
+	
 	/**
 	 * Create the frame.
 	 */
-	public Principal() {
+	public Principal(String tipoUsuario) {
+		this.tipoUsuarioActual = tipoUsuario;
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 892, 696);
 		setLocationRelativeTo(null);
@@ -69,6 +85,7 @@ public class Principal extends JFrame {
         int screenHeight = screenSize.height;
         
        
+        
         
         Connection conexion = Conexion.obtenerConexion();
 
@@ -117,7 +134,7 @@ public class Principal extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		
+		registrarUsuario= new RegistrarUsuario();
 		registrarCita = new RegistrarCita();
 		registrarMedico = new RegistrarMedico();
 		perfilMedico = new PerfilMedico();
@@ -139,11 +156,17 @@ public class Principal extends JFrame {
 		lblHome.setIcon(new ImageIcon("/Users/cristianbenelyon/git/ProyectoFinal_POO/ProyectoFinal_POO/imagenes/icons8-casa-48.png"));
 		panelMenu.add(lblHome);
 		
-		JPanel panelMedico = new JPanel();
+		panelMedico = new JPanel();
 		panelMedico.addMouseListener(new PanelButtonMouseAdapter(panelMedico) {
 			public void mouseClicked(MouseEvent e) {
-				registrarMedico.setModal(true);
-				registrarMedico.setVisible(true);
+				if (tipoUsuarioActual.equals("Admin")) {
+					registrarMedico.setModal(true);
+					registrarMedico.setVisible(true);
+				}else if (tipoUsuarioActual.equals("Medico")) {
+					perfilMedico.setModal(true);
+					perfilMedico.setVisible(true);
+				}
+		
 				
 			}
 		});
@@ -162,11 +185,16 @@ public class Principal extends JFrame {
 		panelMedico.add(lblNewLabel_2);
 		lblNewLabel_2.setForeground(new Color(255, 255, 255));
 		
-		JPanel panelPaciente = new JPanel();
+		panelPaciente = new JPanel();
 		panelPaciente.addMouseListener(new PanelButtonMouseAdapter(panelPaciente) {
 			public void mouseClicked(MouseEvent e) {
-				historialPaciente.setModal(true);
-				historialPaciente.setVisible(true);
+				if (tipoUsuarioActual.equals("Medico")) {
+					historialPaciente.setModal(true);
+					historialPaciente.setVisible(true);
+				}else {
+					JOptionPane.showMessageDialog(null, "Acceso denegado. No tienes permiso para acceder a este apartado.");
+				}
+				
 				
 			}
 		});
@@ -185,11 +213,16 @@ public class Principal extends JFrame {
 		panelPaciente.add(lblNewLabel_3);
 		lblNewLabel_3.setForeground(new Color(255, 255, 255));
 		
-		JPanel panelRegEnfermedad = new JPanel();
+		panelRegEnfermedad = new JPanel();
 		panelRegEnfermedad.addMouseListener(new PanelButtonMouseAdapter(panelRegEnfermedad) {
 			public void mouseClicked(MouseEvent e) {
-				registrarEnfermedades.setModal(true);
-				registrarEnfermedades.setVisible(true);
+				if (tipoUsuarioActual.equals("Admin")) {
+					registrarEnfermedades.setModal(true);
+					registrarEnfermedades.setVisible(true);
+				}else {
+					JOptionPane.showMessageDialog(null, "Acceso denegado. No tienes permiso para acceder a este apartado.");
+				}
+				
 				
 			}
 		});
@@ -208,11 +241,16 @@ public class Principal extends JFrame {
 		panelRegEnfermedad.add(lblNewLabel_4);
 		lblNewLabel_4.setForeground(new Color(255, 255, 255));
 		
-		JPanel panelRegVacuna = new JPanel();
+		panelRegVacuna = new JPanel();
 		panelRegVacuna.addMouseListener(new PanelButtonMouseAdapter(panelRegVacuna) {
 			public void mouseClicked(MouseEvent e) {
-				registrarVacunas.setModal(true);
-				registrarVacunas.setVisible(true);
+				if (tipoUsuarioActual.equals("Admin")) {
+					registrarVacunas.setModal(true);
+					registrarVacunas.setVisible(true);
+				}else {
+					JOptionPane.showMessageDialog(null, "Acceso denegado. No tienes permiso para acceder a este apartado.");
+				}
+				
 				
 			}
 		});
@@ -231,7 +269,7 @@ public class Principal extends JFrame {
 		panelRegVacuna.add(lblNewLabel_5);
 		lblNewLabel_5.setForeground(new Color(255, 255, 255));
 		
-		JPanel panelAdministracion = new JPanel();
+		panelAdministracion = new JPanel();
 		panelAdministracion.addMouseListener(new PanelButtonMouseAdapter(panelAdministracion) {
 		
 		});
@@ -250,11 +288,16 @@ public class Principal extends JFrame {
 		panelAdministracion.add(lblNewLabel_6);
 		lblNewLabel_6.setForeground(new Color(255, 255, 255));
 		
-		JPanel panelRegCita = new JPanel();
+		panelRegCita = new JPanel();
 		panelRegCita.addMouseListener(new PanelButtonMouseAdapter(panelRegCita) {
 			public void mouseClicked(MouseEvent e) {
-				registrarCita.setModal(true);
-				registrarCita.setVisible(true);
+				if(tipoUsuarioActual.equals("Secretaria")) {
+					registrarCita.setModal(true);
+					registrarCita.setVisible(true);
+				}else {
+					JOptionPane.showMessageDialog(null, "Acceso denegado. No tienes permiso para acceder a este apartado.");
+				}
+				
 				
 			}
 		});
@@ -283,6 +326,7 @@ public class Principal extends JFrame {
 		panelCerrarSesion.addMouseListener(new PanelButtonMouseAdapter(panelCerrarSesion) {
 
 				public void mouseClicked(MouseEvent e) {
+					dispose();
 					login.setModal(true);
 					login.setVisible(true);
 					
@@ -316,6 +360,22 @@ public class Principal extends JFrame {
 		lblNewLabel_7.setBounds(1688, 6, 20, 38);
 		contentPane.add(lblNewLabel_7);
 		lblNewLabel_7.setIcon(new ImageIcon("/Users/cristianbenelyon/git/ProyectoFinal_POO/ProyectoFinal_POO/imagenes/icons8-x-20.png"));
+		
+		if (tipoUsuarioActual.equals("Admin")) {
+            deshabilitarComponentes(panelRegCita);
+            deshabilitarComponentes(panelPaciente);
+        } else if (tipoUsuarioActual.equals("Secretaria")) {
+            deshabilitarComponentes(panelMedico);
+            deshabilitarComponentes(panelPaciente);
+            deshabilitarComponentes(panelRegEnfermedad);
+            deshabilitarComponentes(panelRegVacuna);
+            deshabilitarComponentes(panelAdministracion);
+        } else if (tipoUsuarioActual.equals("Medico")) {
+            deshabilitarComponentes(panelRegCita);
+            deshabilitarComponentes(panelRegEnfermedad);
+            deshabilitarComponentes(panelRegVacuna);
+            deshabilitarComponentes(panelAdministracion);
+        }
 	
 	}
 	
@@ -349,4 +409,13 @@ public class Principal extends JFrame {
 			
 		}
 	}
+	private void deshabilitarComponentes(Container container) {
+	    for (Component component : container.getComponents()) {
+	        if (component instanceof Container) {
+	            deshabilitarComponentes((Container) component); // Si es un contenedor, deshabilitar sus componentes internos.
+	        }
+	        component.setEnabled(false); // Deshabilitar el componente actual.
+	    }
+	   
+}
 }

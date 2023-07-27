@@ -1,6 +1,7 @@
 package visual;
 
 import java.awt.BorderLayout;
+
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
@@ -11,23 +12,30 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.border.EmptyBorder;
+
+import accesoDatos.GuardarDatos;
+
+
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import javax.swing.JPasswordField;
 
 public class Login extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private RegistrarUsuario registrarUsuario;
-	private JTextField txtClave;
 	private JTextField txtIdentificacion;
 	private JComboBox cbxTipoUsuario;
 	private String[] opciones;
+	private JPasswordField txtClave;
+	private Principal principal;
 	/**
 	 * Launch the application.
 	 */
@@ -47,6 +55,9 @@ public class Login extends JDialog {
 	 * Create the dialog.
 	 */
 	public Login() {
+		
+		
+		
 		setBackground(new Color(112, 128, 144));
 		setUndecorated(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -63,6 +74,8 @@ public class Login extends JDialog {
 			lblNewLabel.setBounds(304, 108, 92, 16);
 			contentPanel.add(lblNewLabel);
 		}
+		
+
 		String[] opciones = {"Admin", "Secretaria", "Medico"};
 
 		DefaultComboBoxModel<String> comboBoxModel =  new DefaultComboBoxModel<>(opciones);
@@ -76,11 +89,6 @@ public class Login extends JDialog {
 		lblNewLabel_1.setForeground(new Color(255, 255, 255));
 		lblNewLabel_1.setBounds(304, 185, 61, 16);
 		contentPanel.add(lblNewLabel_1);
-		
-		txtClave = new JTextField();
-		txtClave.setBounds(458, 180, 130, 26);
-		contentPanel.add(txtClave);
-		txtClave.setColumns(10);
 		
 		JLabel lblNewLabel_2 = new JLabel("Tipo de usuario");
 		lblNewLabel_2.setForeground(new Color(255, 255, 255));
@@ -114,6 +122,10 @@ public class Login extends JDialog {
 		lblNewLabel_4.setBackground(new Color(255, 255, 255));
 		lblNewLabel_4.setBounds(335, 16, 61, 16);
 		contentPanel.add(lblNewLabel_4);
+		
+		txtClave = new JPasswordField();
+		txtClave.setBounds(458, 180, 130, 26);
+		contentPanel.add(txtClave);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setBackground(new Color(173, 216, 230));
@@ -123,9 +135,29 @@ public class Login extends JDialog {
 				JButton okButton = new JButton("Ingresar");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						clearTxt();
+						 String identificacion = txtIdentificacion.getText();
+		                 String clave = new String(txtClave.getPassword());
+		                 String tipoUsuario = cbxTipoUsuario.getSelectedItem().toString();
+		                 
+		                 boolean inicioSesionCorrecto = GuardarDatos.verificarInicioSesion(identificacion, clave, tipoUsuario);
+		                 
+		                 if (inicioSesionCorrecto) {
+		                	 
+		                	 dispose();
+		                	 principal = new Principal(tipoUsuario);
+		                	 principal.setUndecorated(true);
+		                	 principal.setVisible(true);
+		                	 principal.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
+		                	 JOptionPane.showMessageDialog(Login.this, "Hola "+tipoUsuario+ ", Bienvenido a Clinica Sunny." , "Éxito", JOptionPane.INFORMATION_MESSAGE);
+		                 } else {
+		                     System.out.println("Credenciales incorrectas o tipo de usuario incorrecto. Intente nuevamente.");
+		                     JOptionPane.showMessageDialog(Login.this, "Credenciales incorrectas o tipo de usuario incorrecto. Intente nuevamente.", "Error", JOptionPane.INFORMATION_MESSAGE);
+		                 }
+
+		                 clearTxt();
+		             }
 					}
-				});
+				);
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
@@ -150,4 +182,9 @@ public class Login extends JDialog {
 		
 		
 	}
+	
+
+	
+	
+	
 }
