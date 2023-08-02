@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.JComboBox;
 
 
 
@@ -49,9 +52,91 @@ public class GuardarDatos {
 
         
     }
+
+    
+    public static void insertarDatosConsulta(int id_cita, int id_enfe, int id_vacuna, String fecha) {
+        Connection conexion = Conexion.obtenerConexion();
+        
+
+        if (conexion != null) {
+            try {
+                String sql = "INSERT INTO consulta (id_cita, id_enfermedad,id_vacuna,fecha_consulta) VALUES (?,?,?,?)";
+                PreparedStatement statement = conexion.prepareStatement(sql);
+
+                statement.setInt(1, id_cita);
+                statement.setInt(2, id_enfe);
+                statement.setInt(3, id_vacuna);
+                statement.setString(4, fecha);
+
+                int filasInsertadas = statement.executeUpdate();
+
+                if (filasInsertadas > 0) {
+                    System.out.println("Registro insertado correctamente.");
+                   
+                } else {
+                    System.out.println("No se pudo insertar el registro.");
+                }
+
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    conexion.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            System.out.println("Error al establecer la conexión.");
+        }
+
+        
+    }
+    
+    public static void insertarDatospaciente(String nombre, String cedula, String direccion, String telefono) {
+        Connection conexion = Conexion.obtenerConexion();
+        
+
+        if (conexion != null) {
+            try {
+                String sql = "INSERT INTO paciente (nombre, cedula,direccion,telefono) VALUES (?,?,?,?)";
+                PreparedStatement statement = conexion.prepareStatement(sql);
+
+                statement.setString(1, nombre);
+                statement.setString(2, cedula);
+                statement.setString(3, direccion);
+                statement.setString(4, telefono);
+
+                int filasInsertadas = statement.executeUpdate();
+
+                if (filasInsertadas > 0) {
+                    System.out.println("Registro insertado correctamente.");
+                   
+                } else {
+                    System.out.println("No se pudo insertar el registro.");
+                }
+
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    conexion.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            System.out.println("Error al establecer la conexión.");
+        }
+
+        
+    }
+    
     //insertar datos de las enfermedades
     
-    public static void insertarDatosEnfermedad(String nombre, String cronico) {
+    public static void insertarDatosEnfermedad(String nombre, String answer) {
         Connection conexion = Conexion.obtenerConexion();
         
 
@@ -61,7 +146,7 @@ public class GuardarDatos {
                 PreparedStatement statement = conexion.prepareStatement(sql);
 
                 statement.setString(1, nombre);
-                statement.setString(2, cronico);
+                statement.setString(2, answer);
                 
 
                 int filasInsertadas = statement.executeUpdate();
@@ -288,6 +373,19 @@ public class GuardarDatos {
 
         return inicioSesionCorrecto;
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 
 }

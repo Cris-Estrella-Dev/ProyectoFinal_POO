@@ -8,6 +8,8 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import java.awt.event.ActionListener;
@@ -27,7 +29,11 @@ public class HistorialPaciente extends JDialog {
 	private JButton btnSalir;
 	private ListarEnfermedadesCronicasPaciente listarEnfermedadesCronicasPaciente;
 	private ListarVacunasPaciente listarVacunasPaciente;
-
+	private Principal principal;
+	private Consultas consultas;
+	private ListaPacientes listaPacientes;
+	
+	
 
 	/**
 	 * Launch the application.
@@ -46,6 +52,7 @@ public class HistorialPaciente extends JDialog {
 	 * Create the dialog.
 	 */
 	public HistorialPaciente() {
+		
 		setBackground(new Color(112, 128, 144));
 		setTitle("Paciente");
 		setBounds(100, 100, 1157, 775);
@@ -55,6 +62,9 @@ public class HistorialPaciente extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
+		
+		
+		
 		{
 			JLabel lblNewLabel = new JLabel("Nombre:");
 			lblNewLabel.setForeground(new Color(255, 255, 255));
@@ -115,9 +125,11 @@ public class HistorialPaciente extends JDialog {
 				btnVerEnfermedadesCronicas = new JButton("Ver enfermedades cronicas del paciente");
 				btnVerEnfermedadesCronicas.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
+						dispose();
 						listarEnfermedadesCronicasPaciente = new ListarEnfermedadesCronicasPaciente();
 						listarEnfermedadesCronicasPaciente.setModal(true);
 						listarEnfermedadesCronicasPaciente.setVisible(true);
+						
 					}
 				});
 				btnVerEnfermedadesCronicas.setActionCommand("OK");
@@ -127,9 +139,11 @@ public class HistorialPaciente extends JDialog {
 				btnVerVacunasPaciente = new JButton("Ver vacunas del paciente");
 				btnVerVacunasPaciente.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
+						dispose();
 						listarVacunasPaciente = new ListarVacunasPaciente();
 						listarVacunasPaciente.setModal(true);
 						listarVacunasPaciente.setVisible(true);
+						
 					}
 				});
 				btnVerVacunasPaciente.setActionCommand("OK");
@@ -137,16 +151,54 @@ public class HistorialPaciente extends JDialog {
 				getRootPane().setDefaultButton(btnVerVacunasPaciente);
 			}
 			{
+				
 				btnSalir = new JButton("Salir");
 				btnSalir.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
+			
+						consultas = new Consultas();
+						listaPacientes = new ListaPacientes();
 						dispose();
+						consultas.setVisible(true);
+						
+						
+						
+						
 					}
 				});
 				btnSalir.setActionCommand("Cancel");
 				buttonPane.add(btnSalir);
 			}
 		}
+	
+		
+		
+	}
+	
+	public  void agregardatospaciente(String cedula, String nombre, String direccion, String telefono) {
+		lblCedulaPaciente.setText(cedula);
+		lblNombrePaciente.setText(nombre);
+		lblDireccionPaciente.setText(direccion);
+		lblTelefonoCliente.setText(telefono);
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

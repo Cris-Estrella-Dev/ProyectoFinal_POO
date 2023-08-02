@@ -1,5 +1,10 @@
 package visual;
 
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import java.awt.BorderLayout;
 import accesoDatos.GuardarDatos;
 import java.awt.FlowLayout;
@@ -126,19 +131,49 @@ public class RegistrarMedico extends JDialog {
 		}
 		btnGuardarMedico.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		     
+		    
 		        
 		        String nombre = txtNombreMedico.getText();
 		        String cedula = txtCedulaMedico.getText();
 		        String especialidad = txtEspecialidadMedico.getText();
 		        String disponibilidad = txtDisponibilidadMedico.getText();
 		        
-		        GuardarDatos.insertarDatos(nombre, cedula, especialidad, disponibilidad);
 		        
-		        JOptionPane.showMessageDialog(RegistrarMedico.this, "Médico registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+		        if (nombre.isEmpty() || cedula.isEmpty() || especialidad.isEmpty() || disponibilidad.isEmpty()) {
+                    JOptionPane.showMessageDialog(RegistrarMedico.this, "Debe llenar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return; 
+                }
+		        try {
+		  
+		            String nombreArchivo = "medicos.txt";
+		            FileWriter fileWriter = new FileWriter(nombreArchivo, true);
+		            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
+		 
+		            bufferedWriter.write(cedula + "    " + nombre + "    " + especialidad + "    " + disponibilidad);
+		            bufferedWriter.newLine();
+
+		      
+		            bufferedWriter.close();
+		            GuardarDatos.insertarDatos(nombre, cedula, especialidad, disponibilidad);
+		            JOptionPane.showMessageDialog(RegistrarMedico.this, "Médico registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+		            clearTxt();
+		        } catch (IOException ex) {
+		            JOptionPane.showMessageDialog(RegistrarMedico.this, "Error al guardar los datos.", "Error", JOptionPane.ERROR_MESSAGE);
+		        }
+		        
+		        
 		    }
+		    
+		    
 		});
 
+		
+	}
+	public void clearTxt() {
+		txtCedulaMedico.setText("");
+		txtNombreMedico.setText("");
+		txtEspecialidadMedico.setText("");
+		txtDisponibilidadMedico.setText("");
 	}
 }

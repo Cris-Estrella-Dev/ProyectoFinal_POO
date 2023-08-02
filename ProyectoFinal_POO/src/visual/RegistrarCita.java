@@ -6,11 +6,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import accesoDatos.CargarDatos;
 import accesoDatos.GuardarDatos;
 
 import javax.swing.JLabel;
@@ -30,9 +32,10 @@ public class RegistrarCita extends JDialog {
 	private JTextField txtDireccionPaciente;
 	private JComboBox cbxEspecialistas;
 	private JTextField txtFechaCita;
-	private JTextField txtidmedico;
+	 JTextField txtidmedico;
 	private JButton btnGuardarCita;
 	private String[] opciones;
+	private JTextField txtnombreespeciaista;
 	/**
 	 * Launch the application.
 	 */
@@ -50,8 +53,10 @@ public class RegistrarCita extends JDialog {
 	 * Create the dialog.
 	 */
 	public RegistrarCita() {
+		
+		ImageIcon imageIcon = new ImageIcon("/Users/cristianbenelyon/git/ProyectoFinal_POO/ProyectoFinal_POO/imagenes/REGISTRAR CITA AHORA SI-23-23.png");
 		setTitle("Registrar cita");
-		setBounds(100, 100, 1052, 340);
+		setBounds(100, 100, 1169, 959);
 		getContentPane().setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		contentPanel.setBackground(new Color(112, 128, 144));
@@ -59,81 +64,46 @@ public class RegistrarCita extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		{
-			JLabel lblNewLabel = new JLabel("Cédula:");
-			lblNewLabel.setForeground(new Color(255, 255, 255));
-			lblNewLabel.setBounds(18, 39, 61, 16);
-			contentPanel.add(lblNewLabel);
-		}
-		{
 			txtCedulaPaciente = new JTextField();
-			txtCedulaPaciente.setBounds(82, 34, 130, 26);
+			txtCedulaPaciente.setBounds(156, 133, 130, 26);
 			contentPanel.add(txtCedulaPaciente);
 			txtCedulaPaciente.setColumns(10);
 		}
 		{
-			JLabel lblNewLabel_1 = new JLabel("Nombre:");
-			lblNewLabel_1.setForeground(new Color(255, 255, 255));
-			lblNewLabel_1.setBounds(250, 39, 61, 16);
-			contentPanel.add(lblNewLabel_1);
-		}
-		{
 			txtNombrePaciente = new JTextField();
-			txtNombrePaciente.setBounds(335, 34, 130, 26);
+			txtNombrePaciente.setBounds(156, 262, 130, 26);
 			contentPanel.add(txtNombrePaciente);
 			txtNombrePaciente.setColumns(10);
 		}
 		{
-			JLabel lblNewLabel_2 = new JLabel("Teléfono:");
-			lblNewLabel_2.setForeground(new Color(255, 255, 255));
-			lblNewLabel_2.setBounds(525, 39, 69, 16);
-			contentPanel.add(lblNewLabel_2);
-		}
-		{
 			txtTelefonoPaciente = new JTextField();
-			txtTelefonoPaciente.setBounds(591, 34, 145, 26);
+			txtTelefonoPaciente.setBounds(138, 383, 145, 26);
 			contentPanel.add(txtTelefonoPaciente);
 			txtTelefonoPaciente.setColumns(10);
 		}
 		{
-			JLabel lblNewLabel_3 = new JLabel("Dirección:");
-			lblNewLabel_3.setForeground(new Color(255, 255, 255));
-			lblNewLabel_3.setBounds(792, 39, 69, 16);
-			contentPanel.add(lblNewLabel_3);
-		}
-		{
 			txtDireccionPaciente = new JTextField();
-			txtDireccionPaciente.setBounds(867, 10, 179, 74);
+			txtDireccionPaciente.setBounds(125, 479, 179, 74);
 			contentPanel.add(txtDireccionPaciente);
 			txtDireccionPaciente.setColumns(10);
 		}
 		{
-			JLabel lblNewLabel_4 = new JLabel("Especialista:");
-			lblNewLabel_4.setForeground(new Color(255, 255, 255));
-			lblNewLabel_4.setBounds(18, 175, 85, 16);
-			contentPanel.add(lblNewLabel_4);
-		}
-		{
-			String[] opciones = {"Opcion de prueba", "Opcion de prueba", "Opcion de prueba"};
-
-			DefaultComboBoxModel<String> comboBoxModel =  new DefaultComboBoxModel<>(opciones);
-			cbxEspecialistas = new JComboBox(comboBoxModel);
-			cbxEspecialistas.setBounds(99, 171, 179, 27);
+			
+			cbxEspecialistas = new JComboBox();
+			cbxEspecialistas.setBounds(138, 622, 179, 27);
 			contentPanel.add(cbxEspecialistas);
-		}
-		{
-			JLabel lblNewLabel_5 = new JLabel("Fecha cita (dd/mm/yyyy):");
-			lblNewLabel_5.setForeground(new Color(255, 255, 255));
-			lblNewLabel_5.setBounds(383, 175, 168, 16);
-			contentPanel.add(lblNewLabel_5);
+			cbxEspecialistas.setSelectedItem(null);
+
 		}
 		{
 			txtFechaCita = new JTextField();
-			txtFechaCita.setBounds(565, 170, 130, 26);
+			txtFechaCita.setBounds(156, 749, 130, 26);
 			contentPanel.add(txtFechaCita);
 			txtFechaCita.setColumns(10);
 		}
 		
 		txtidmedico = new JTextField();
+		txtidmedico.setVisible(false);
 		txtidmedico.setBounds(28, 210, 61, 26);
 		contentPanel.add(txtidmedico);
 		txtidmedico.setColumns(10);
@@ -142,18 +112,41 @@ public class RegistrarCita extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-
-				btnGuardarCita = new JButton("Guardar");
-				btnGuardarCita.setActionCommand("OK");
-				buttonPane.add(btnGuardarCita);
-				getRootPane().setDefaultButton(btnGuardarCita);
-			}
-			{
 				JButton btnSalir = new JButton("Salir");
 				btnSalir.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						dispose();
 					}
+				});
+				{
+
+					btnGuardarCita = new JButton("Guardar");
+					buttonPane.add(btnGuardarCita);
+					btnGuardarCita.setActionCommand("OK");
+					getRootPane().setDefaultButton(btnGuardarCita);
+				}
+				
+				btnGuardarCita.addActionListener(new ActionListener() {
+				    public void actionPerformed(ActionEvent e) {
+				     
+				        
+				        String cedula = txtCedulaPaciente.getText();
+				        String nombre = txtNombrePaciente.getText();
+				        String telefono = txtTelefonoPaciente.getText();
+				        String direccion = txtDireccionPaciente.getText();
+				        String fecha = txtFechaCita.getText();
+				        int idmedico = Integer.parseInt(txtidmedico.getText());
+				       
+				        if (cedula.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || direccion.isEmpty() || fecha.isEmpty()) {
+                    JOptionPane.showMessageDialog(RegistrarCita.this, "Debe llenar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return; // Evita continuar con el inicio de sesión si hay campos vacíos.
+                }
+				        
+				        GuardarDatos.insertarDatosCita(cedula, nombre, telefono, direccion, fecha, idmedico);
+				        JOptionPane.showMessageDialog(RegistrarCita.this, "Cita registrada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+				        	
+				    }
 				});
 				btnSalir.setActionCommand("Cancel");
 				buttonPane.add(btnSalir);
@@ -161,24 +154,32 @@ public class RegistrarCita extends JDialog {
 		}
 		
 		
-		btnGuardarCita.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		     
-		        
-		        String cedula = txtCedulaPaciente.getText();
-		        String nombre = txtNombrePaciente.getText();
-		        String telefono = txtTelefonoPaciente.getText();
-		        String direccion = txtDireccionPaciente.getText();
-		        String fecha = txtFechaCita.getText();
-		        int idmedico = Integer.parseInt(txtidmedico.getText());
-		       
-		        
-		        GuardarDatos.insertarDatosCita(cedula, nombre, telefono, direccion, fecha, idmedico);
-		        JOptionPane.showMessageDialog(RegistrarCita.this, "Cita registrada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 
-
-		    }
-		});
+		CargarDatos.CargarComboBox(cbxEspecialistas);
+		
+		JButton btnbuscarespecialista = new JButton("Buscar especialista");
+		btnbuscarespecialista.setBounds(335, 621, 168, 29);
+		contentPanel.add(btnbuscarespecialista);
+		btnbuscarespecialista.setActionCommand("OK");
+		
+		btnbuscarespecialista.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedEspecialista = (String) cbxEspecialistas.getSelectedItem();
+                ListaEspecialista showEspecialistaForm = new ListaEspecialista(selectedEspecialista);
+                dispose();
+                showEspecialistaForm.setVisible(true);
+            }
+        });
+		
+		txtnombreespeciaista = new JTextField();
+		txtnombreespeciaista.setColumns(10);
+		txtnombreespeciaista.setBounds(537, 621, 130, 26);
+		contentPanel.add(txtnombreespeciaista);
+		
+		JLabel lblNewLabel = new JLabel(imageIcon);
+		lblNewLabel.setBounds(-79, -11, 1248, 944);
+		contentPanel.add(lblNewLabel);
 		
 	}
 	
@@ -194,8 +195,11 @@ public class RegistrarCita extends JDialog {
 		
 	}
 	
-	
+	public void agregardatostextbox(String id, String nombre) {
 		
+		txtidmedico.setText(id);
+		txtnombreespeciaista.setText(nombre);
 		
+	}
 	}
 

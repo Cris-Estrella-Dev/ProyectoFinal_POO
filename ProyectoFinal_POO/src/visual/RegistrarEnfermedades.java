@@ -28,7 +28,7 @@ public class RegistrarEnfermedades extends JDialog {
 	private JRadioButton rdbtnNo;
 	private JButton btnGuardar;
 	private JButton btnSalir;
-
+	private boolean enfermedadCronica = false;
 	/**
 	 * Launch the application.
 	 */
@@ -71,14 +71,26 @@ public class RegistrarEnfermedades extends JDialog {
 			lblNewLabel_1.setBounds(24, 79, 61, 16);
 			contentPanel.add(lblNewLabel_1);
 		}
+		
 		{
 			rdbtnSi = new JRadioButton("Si");
+			rdbtnSi.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					enfermedadCronica = true;
+				}
+			});
 			rdbtnSi.setForeground(new Color(255, 255, 255));
 			rdbtnSi.setBounds(104, 75, 51, 23);
 			contentPanel.add(rdbtnSi);
 		}
 		{
+			
 			rdbtnNo = new JRadioButton("No");
+			rdbtnNo.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					 enfermedadCronica = false;
+				}
+			});
 			rdbtnNo.setForeground(new Color(255, 255, 255));
 			rdbtnNo.setBounds(171, 75, 51, 23);
 			contentPanel.add(rdbtnNo);
@@ -110,14 +122,33 @@ public class RegistrarEnfermedades extends JDialog {
 		     
 		        
 		        String nombre = txtNombreEnfermedad.getText();
-		       String answer = rdbtnSi.getText();
+		        String answer = "";
+		        if (enfermedadCronica==true) {
+					answer = rdbtnSi.getText();
+				}
+		        if (enfermedadCronica==false) {
+					answer = rdbtnNo.getText();
+				
+				}
+				
+		        if (nombre.isEmpty() || answer.isEmpty()) {
+                    JOptionPane.showMessageDialog(RegistrarEnfermedades.this, "Debe llenar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return; // Evita continuar con el inicio de sesión si hay campos vacíos.
+                }
 		        
 		        GuardarDatos.insertarDatosEnfermedad(nombre, answer);
 		        JOptionPane.showMessageDialog(RegistrarEnfermedades.this, "Enfermedad registrada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
+		        clearTxt();
 
 		    }
 		});
+	}
+	
+	public void clearTxt() {
+		txtNombreEnfermedad.setText("");
+		rdbtnSi.setSelected(false);
+		rdbtnNo.setSelected(false);
+
 	}
 
 }

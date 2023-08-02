@@ -90,13 +90,20 @@ public class RegistrarVacunas extends JDialog {
 		        
 		        String nombre = textField.getText();
 		       
-		        
+		        if (nombre.isEmpty()) {
+                    JOptionPane.showMessageDialog(RegistrarVacunas.this, "Debe llenar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return; // Evita continuar con el inicio de sesión si hay campos vacíos.
+                }
 		        GuardarDatos.insertarDatosVacuna(nombre);
 		        JOptionPane.showMessageDialog(RegistrarVacunas.this, "Vacuna registrada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
+		        clearTxt();
 
 		    }
 		});
+	}
+	
+	public void clearTxt() {
+		textField.setText("");
 	}
 
 }

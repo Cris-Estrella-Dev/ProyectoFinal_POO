@@ -54,6 +54,9 @@ public class ListarVacunasPaciente extends JDialog {
 				btnSalir.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						dispose();
+						HistorialPaciente historialPaciente =  new HistorialPaciente();
+						historialPaciente.setModal(true);
+						historialPaciente.setVisible(true);
 					}
 				});
 				btnSalir.setActionCommand("Cancel");
