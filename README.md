@@ -130,7 +130,4 @@ Es un proyecto académico y conserva decisiones de ese contexto:
 - La pantalla principal está diseñada para 1728 × 1105; en pantallas más pequeñas aparecen
   barras de desplazamiento.
 
-## Créditos
 
-- [Cristian Estrella](https://github.com/Cris-Estrella-Dev) — interfaz, pantallas y lógica de la aplicación.
-- [Nawel](https://github.com/nawelyi) — capa inicial de acceso a datos.
