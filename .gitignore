@@ -1,0 +1,21 @@
+# Compilación
+/target/
+/bin/
+
+# Archivos generados por la aplicación
+/respaldos/
+
+# IDEs
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+.vscode/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Configuración local
+.env
