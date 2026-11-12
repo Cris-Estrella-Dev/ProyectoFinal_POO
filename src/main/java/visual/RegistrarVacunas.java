@@ -26,19 +26,6 @@ public class RegistrarVacunas extends JDialog {
 	private JButton btnGuardarVacuna;
 	private JTextField textField;
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			RegistrarVacunas dialog = new RegistrarVacunas();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Create the dialog.
 	 */
 	public RegistrarVacunas() {
@@ -94,9 +81,12 @@ public class RegistrarVacunas extends JDialog {
                     JOptionPane.showMessageDialog(RegistrarVacunas.this, "Debe llenar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
                     return; // Evita continuar con el inicio de sesión si hay campos vacíos.
                 }
-		        GuardarDatos.insertarDatosVacuna(nombre);
-		        JOptionPane.showMessageDialog(RegistrarVacunas.this, "Vacuna registrada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-		        clearTxt();
+		        if (GuardarDatos.insertarDatosVacuna(nombre)) {
+		            JOptionPane.showMessageDialog(RegistrarVacunas.this, "Vacuna registrada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+		            clearTxt();
+		        } else {
+		            JOptionPane.showMessageDialog(RegistrarVacunas.this, "No se pudo registrar la vacuna.", "Error", JOptionPane.ERROR_MESSAGE);
+		        }
 
 		    }
 		});

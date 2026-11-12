@@ -1,29 +1,22 @@
 package visual;
 
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import java.awt.BorderLayout;
-import accesoDatos.GuardarDatos;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import accesoDatos.GuardarDatos;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.Color;
+import javax.swing.border.EmptyBorder;
 
+import accesoDatos.GuardarDatos;
+
+/** Registra un médico nuevo o, si se abre con los datos de uno existente, lo modifica. */
 public class RegistrarMedico extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
@@ -34,23 +27,25 @@ public class RegistrarMedico extends JDialog {
 	private JButton btnGuardarMedico;
 	private JButton btnSalir;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			RegistrarMedico dialog = new RegistrarMedico();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	/** Id del médico que se está modificando, o null si es un registro nuevo. */
+	private final Integer idMedico;
+
+	public RegistrarMedico() {
+		this(null);
 	}
 
-	/**
-	 * Create the dialog.
-	 */
-	public RegistrarMedico() {
+	/** Abre el formulario para modificar un médico existente. */
+	public RegistrarMedico(int idMedico, String nombre, String cedula, String especialidad, String disponibilidad) {
+		this(Integer.valueOf(idMedico));
+		txtNombreMedico.setText(nombre);
+		txtCedulaMedico.setText(cedula);
+		txtEspecialidadMedico.setText(especialidad);
+		txtDisponibilidadMedico.setText(disponibilidad);
+	}
+
+	private RegistrarMedico(Integer idMedico) {
+		this.idMedico = idMedico;
+		setTitle(idMedico == null ? "Registrar médico" : "Modificar médico");
 		setBounds(100, 100, 583, 380);
 		getContentPane().setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
@@ -126,50 +121,49 @@ public class RegistrarMedico extends JDialog {
 				btnSalir.setActionCommand("Cancel");
 				buttonPane.add(btnSalir);
 			}
-			
-			
+
+
 		}
 		btnGuardarMedico.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		    
-		        
-		        String nombre = txtNombreMedico.getText();
-		        String cedula = txtCedulaMedico.getText();
-		        String especialidad = txtEspecialidadMedico.getText();
-		        String disponibilidad = txtDisponibilidadMedico.getText();
-		        
-		        
-		        if (nombre.isEmpty() || cedula.isEmpty() || especialidad.isEmpty() || disponibilidad.isEmpty()) {
-                    JOptionPane.showMessageDialog(RegistrarMedico.this, "Debe llenar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return; 
-                }
-		        try {
-		  
-		            String nombreArchivo = "medicos.txt";
-		            FileWriter fileWriter = new FileWriter(nombreArchivo, true);
-		            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-		 
-		            bufferedWriter.write(cedula + "    " + nombre + "    " + especialidad + "    " + disponibilidad);
-		            bufferedWriter.newLine();
-
-		      
-		            bufferedWriter.close();
-		            GuardarDatos.insertarDatos(nombre, cedula, especialidad, disponibilidad);
-		            JOptionPane.showMessageDialog(RegistrarMedico.this, "Médico registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-		            clearTxt();
-		        } catch (IOException ex) {
-		            JOptionPane.showMessageDialog(RegistrarMedico.this, "Error al guardar los datos.", "Error", JOptionPane.ERROR_MESSAGE);
-		        }
-		        
-		        
+		        guardarMedico();
 		    }
-		    
-		    
 		});
-
-		
 	}
+
+	private void guardarMedico() {
+		String nombre = txtNombreMedico.getText().trim();
+		String cedula = txtCedulaMedico.getText().trim();
+		String especialidad = txtEspecialidadMedico.getText().trim();
+		String disponibilidad = txtDisponibilidadMedico.getText().trim();
+
+		if (nombre.isEmpty() || cedula.isEmpty() || especialidad.isEmpty() || disponibilidad.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Debe llenar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		// El médico inicia sesión con su cédula como identificación, que debe tener 11 caracteres.
+		if (cedula.length() != 11) {
+			JOptionPane.showMessageDialog(this, "La cédula debe tener 11 caracteres.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (idMedico == null) {
+			if (GuardarDatos.insertarDatosMedico(nombre, cedula, especialidad, disponibilidad)) {
+				JOptionPane.showMessageDialog(this, "Médico registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+				clearTxt();
+			} else {
+				JOptionPane.showMessageDialog(this, "No se pudo registrar el médico. Verifique que la cédula no esté ya registrada.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		} else {
+			if (GuardarDatos.actualizarDatosMedico(idMedico, nombre, cedula, especialidad, disponibilidad)) {
+				JOptionPane.showMessageDialog(this, "Médico modificado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+				dispose();
+			} else {
+				JOptionPane.showMessageDialog(this, "No se pudo modificar el médico.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
 	public void clearTxt() {
 		txtCedulaMedico.setText("");
 		txtNombreMedico.setText("");

@@ -3,7 +3,6 @@ package visual;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.FontFormatException;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -22,8 +21,6 @@ import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.io.File;
-import java.io.IOException;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JPasswordField;
@@ -64,26 +61,11 @@ public class RegistrarUsuario extends JDialog {
 	private JPasswordField txtClave;
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			RegistrarUsuario dialog = new RegistrarUsuario();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Create the dialog.
 	 */
 	public RegistrarUsuario() {
 
-		 String fontPath = "/Users/cristianbenelyon/Library/Fonts/GothamBold.ttf";
-		 ImageIcon imageIcon = new ImageIcon("/Users/cristianbenelyon/git/ProyectoFinal_POO/ProyectoFinal_POO/imagenes/LOGIN SCREEN WITHOUT TEXT-08 2-08.png");
-	     Font customFont = loadFontFromFile(fontPath);
+		ImageIcon imageIcon = Recursos.imagen(Recursos.LOGIN);
 		
 		setBackground(new Color(112, 128, 144));
 		setUndecorated(true);
@@ -173,28 +155,28 @@ public class RegistrarUsuario extends JDialog {
 				btnRegistrarse = new JButton("Registrarse");
 				btnRegistrarse.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						 String identificacion = txtIdentificacion.getText();
-		                    String clave = new String(txtClave.getPassword());
-		                    String tipoUsuario = Integer.toString(cbxTipoUsuario.getSelectedIndex());
-		                    
-		                    if(identificacion.length() == 11) {
-			                	tipoUsuario = cbxTipoUsuario.getSelectedItem().toString();
-			                    GuardarDatos.insertarDatosUsuario(identificacion, clave, tipoUsuario);
-			                    JOptionPane.showMessageDialog(RegistrarUsuario.this, "Usuario registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-		                    	
-		                    }else {
-		                    	if (identificacion.isEmpty() || clave.isEmpty() || cbxTipoUsuario.getSelectedIndex()<=-1) {
-			                    	JOptionPane.showMessageDialog(RegistrarUsuario.this, "Debe llenar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
-				                     return; // No continúes con el proceso de inicio de sesión
-				                 }else {
-					                    JOptionPane.showMessageDialog(RegistrarUsuario.this, "la cedula debe tener 11 caracteres", "Fail", JOptionPane.INFORMATION_MESSAGE);
-									
-								}
-							}
-		                    
-		                   
+						String identificacion = txtIdentificacion.getText();
+						String clave = new String(txtClave.getPassword());
 
-		                    clearTxt();
+						// Los textos de ayuda ("IDENTIFICACION", "CONTRASEÑA") no cuentan como datos.
+						if (identificacion.isEmpty() || identificacion.equals(hintTextIdentificacion)
+								|| clave.isEmpty() || clave.equals(hintTextClave)
+								|| cbxTipoUsuario.getSelectedIndex() <= -1) {
+							JOptionPane.showMessageDialog(RegistrarUsuario.this, "Debe llenar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+						if (identificacion.length() != 11) {
+							JOptionPane.showMessageDialog(RegistrarUsuario.this, "La cédula debe tener 11 caracteres.", "Error", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+
+						String tipoUsuario = cbxTipoUsuario.getSelectedItem().toString();
+						if (GuardarDatos.insertarDatosUsuario(identificacion, clave, tipoUsuario)) {
+							JOptionPane.showMessageDialog(RegistrarUsuario.this, "Usuario registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+							clearTxt();
+						} else {
+							JOptionPane.showMessageDialog(RegistrarUsuario.this, "No se pudo registrar el usuario. Verifique que no exista ya y que haya conexión con la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				});
 				btnRegistrarse.setActionCommand("OK");
@@ -227,14 +209,4 @@ public class RegistrarUsuario extends JDialog {
 		
 		
 	}
-	public static Font loadFontFromFile(String path) {
-        try {
-            File fontFile = new File(path);
-            return Font.createFont(Font.TRUETYPE_FONT, fontFile);
-        } catch (IOException | FontFormatException e) {
-            e.printStackTrace();
-           
-            return new Font("Arial", Font.PLAIN, 12);
-        }
-    }
 }

@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -30,22 +31,10 @@ public class RegistrarEnfermedades extends JDialog {
 	private JButton btnSalir;
 	private boolean enfermedadCronica = false;
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			RegistrarEnfermedades dialog = new RegistrarEnfermedades();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Create the dialog.
 	 */
 	public RegistrarEnfermedades() {
+		setTitle("Registrar enfermedad");
 		setBounds(100, 100, 438, 249);
 		getContentPane().setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
@@ -95,6 +84,10 @@ public class RegistrarEnfermedades extends JDialog {
 			rdbtnNo.setBounds(171, 75, 51, 23);
 			contentPanel.add(rdbtnNo);
 		}
+		ButtonGroup grupoCronica = new ButtonGroup();
+		grupoCronica.add(rdbtnSi);
+		grupoCronica.add(rdbtnNo);
+		rdbtnNo.setSelected(true);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -136,9 +129,12 @@ public class RegistrarEnfermedades extends JDialog {
                     return; // Evita continuar con el inicio de sesión si hay campos vacíos.
                 }
 		        
-		        GuardarDatos.insertarDatosEnfermedad(nombre, answer);
-		        JOptionPane.showMessageDialog(RegistrarEnfermedades.this, "Enfermedad registrada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-		        clearTxt();
+		        if (GuardarDatos.insertarDatosEnfermedad(nombre, answer)) {
+		            JOptionPane.showMessageDialog(RegistrarEnfermedades.this, "Enfermedad registrada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+		            clearTxt();
+		        } else {
+		            JOptionPane.showMessageDialog(RegistrarEnfermedades.this, "No se pudo registrar la enfermedad.", "Error", JOptionPane.ERROR_MESSAGE);
+		        }
 
 		    }
 		});
@@ -146,8 +142,8 @@ public class RegistrarEnfermedades extends JDialog {
 	
 	public void clearTxt() {
 		txtNombreEnfermedad.setText("");
-		rdbtnSi.setSelected(false);
-		rdbtnNo.setSelected(false);
+		rdbtnNo.setSelected(true);
+		enfermedadCronica = false;
 
 	}
 

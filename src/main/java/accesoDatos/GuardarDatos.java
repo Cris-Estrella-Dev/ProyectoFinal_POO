@@ -4,388 +4,95 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-import javax.swing.JComboBox;
-
-
-
+/**
+ * Operaciones de escritura sobre la base de datos.
+ *
+ * Todos los métodos devuelven true si la operación se guardó, para que la
+ * interfaz pueda avisar al usuario cuando algo falla.
+ */
 public class GuardarDatos {
 
-	//insertar medico
-    public static void insertarDatos(String campo1, String campo2, String campo3, String campo4) {
-        Connection conexion = Conexion.obtenerConexion();
-        
-
-        if (conexion != null) {
-            try {
-                String sql = "INSERT INTO Medicos (nombre, cedula,especialidad,disponibilidad) VALUES (?,?,?,?)";
-                PreparedStatement statement = conexion.prepareStatement(sql);
-
-                statement.setString(1, campo1);
-                statement.setString(2, campo2);
-                statement.setString(3, campo3);
-                statement.setString(4, campo4);
-
-                int filasInsertadas = statement.executeUpdate();
-
-                if (filasInsertadas > 0) {
-                    System.out.println("Registro insertado correctamente.");
-                   
-                } else {
-                    System.out.println("No se pudo insertar el registro.");
-                }
-
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            System.out.println("Error al establecer la conexión.");
-        }
-
-        
+    private GuardarDatos() {
     }
 
-    
-    public static void insertarDatosConsulta(int id_cita, int id_enfe, int id_vacuna, String fecha) {
-        Connection conexion = Conexion.obtenerConexion();
-        
-
-        if (conexion != null) {
-            try {
-                String sql = "INSERT INTO consulta (id_cita, id_enfermedad,id_vacuna,fecha_consulta) VALUES (?,?,?,?)";
-                PreparedStatement statement = conexion.prepareStatement(sql);
-
-                statement.setInt(1, id_cita);
-                statement.setInt(2, id_enfe);
-                statement.setInt(3, id_vacuna);
-                statement.setString(4, fecha);
-
-                int filasInsertadas = statement.executeUpdate();
-
-                if (filasInsertadas > 0) {
-                    System.out.println("Registro insertado correctamente.");
-                   
-                } else {
-                    System.out.println("No se pudo insertar el registro.");
-                }
-
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            System.out.println("Error al establecer la conexión.");
-        }
-
-        
+    public static boolean insertarDatosMedico(String nombre, String cedula, String especialidad, String disponibilidad) {
+        return ejecutar("INSERT INTO medicos (nombre, cedula, especialidad, disponibilidad) VALUES (?,?,?,?)",
+                nombre, cedula, especialidad, disponibilidad);
     }
-    
-    public static void insertarDatospaciente(String nombre, String cedula, String direccion, String telefono) {
-        Connection conexion = Conexion.obtenerConexion();
-        
 
-        if (conexion != null) {
-            try {
-                String sql = "INSERT INTO paciente (nombre, cedula,direccion,telefono) VALUES (?,?,?,?)";
-                PreparedStatement statement = conexion.prepareStatement(sql);
-
-                statement.setString(1, nombre);
-                statement.setString(2, cedula);
-                statement.setString(3, direccion);
-                statement.setString(4, telefono);
-
-                int filasInsertadas = statement.executeUpdate();
-
-                if (filasInsertadas > 0) {
-                    System.out.println("Registro insertado correctamente.");
-                   
-                } else {
-                    System.out.println("No se pudo insertar el registro.");
-                }
-
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            System.out.println("Error al establecer la conexión.");
-        }
-
-        
+    public static boolean actualizarDatosMedico(int idMedico, String nombre, String cedula, String especialidad,
+            String disponibilidad) {
+        return ejecutar("UPDATE medicos SET nombre = ?, cedula = ?, especialidad = ?, disponibilidad = ? WHERE id_medico = ?",
+                nombre, cedula, especialidad, disponibilidad, idMedico);
     }
-    
-    //insertar datos de las enfermedades
-    
-    public static void insertarDatosEnfermedad(String nombre, String answer) {
-        Connection conexion = Conexion.obtenerConexion();
-        
 
-        if (conexion != null) {
-            try {
-                String sql = "INSERT INTO Enfermedad (nombre, cronico) VALUES (?,?)";
-                PreparedStatement statement = conexion.prepareStatement(sql);
-
-                statement.setString(1, nombre);
-                statement.setString(2, answer);
-                
-
-                int filasInsertadas = statement.executeUpdate();
-
-                if (filasInsertadas > 0) {
-                    System.out.println("Registro insertado correctamente.");
-                   
-                } else {
-                    System.out.println("No se pudo insertar el registro.");
-                }
-
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            System.out.println("Error al establecer la conexión.");
-        }
-
-        
+    public static boolean eliminarMedico(int idMedico) {
+        return ejecutar("DELETE FROM medicos WHERE id_medico = ?", idMedico);
     }
-    
-    //insertar vacuna
-    
-    public static void insertarDatosVacuna(String nombre) {
-        Connection conexion = Conexion.obtenerConexion();
-        
 
-        if (conexion != null) {
-            try {
-                String sql = "INSERT INTO Vacuna (nombre) VALUES (?)";
-                PreparedStatement statement = conexion.prepareStatement(sql);
-
-                statement.setString(1, nombre);
-                
-                
-
-                int filasInsertadas = statement.executeUpdate();
-
-                if (filasInsertadas > 0) {
-                    System.out.println("Registro insertado correctamente.");
-                   
-                } else {
-                    System.out.println("No se pudo insertar el registro.");
-                }
-
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            System.out.println("Error al establecer la conexión.");
-        }
-
-        
+    public static boolean insertarDatosCita(String cedula, String nombre, String telefono, String direccion,
+            String fecha, int idMedico) {
+        return ejecutar("INSERT INTO citas (id_medico, cedula, nombre, telefono, direccion, fecha_cita) VALUES (?,?,?,?,?,?)",
+                idMedico, cedula, nombre, telefono, direccion, fecha);
     }
-    
-    public static void insertarDatosCita(String cedula, String nombre, String telefono, String direccion, String fecha, int idmedico) {
-        Connection conexion = Conexion.obtenerConexion();
-        
 
-        if (conexion != null) {
-            try {
-                String sql = "INSERT INTO Citas (id_medico,cedula,nombre,telefono,direccion,fecha_cita) VALUES (?,?,?,?,?,?)";
-                PreparedStatement statement = conexion.prepareStatement(sql);
-                statement.setInt(1, idmedico);
-                statement.setString(2, cedula);
-                statement.setString(3, nombre);
-                statement.setString(4, telefono);
-                statement.setString(5, direccion);
-                statement.setString(6, fecha);
-                
-                
-
-                int filasInsertadas = statement.executeUpdate();
-
-                if (filasInsertadas > 0) {
-                    System.out.println("Registro insertado correctamente.");
-                   
-                } else {
-                    System.out.println("No se pudo insertar el registro.");
-                }
-
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            System.out.println("Error al establecer la conexión.");
-        }
-
-        
+    /**
+     * @param idVacuna puede ser null: no en todas las consultas se aplica una vacuna.
+     */
+    public static boolean insertarDatosConsulta(int idCita, int idEnfermedad, Integer idVacuna, String fecha) {
+        return ejecutar("INSERT INTO consulta (id_cita, id_enfermedad, id_vacuna, fecha_consulta) VALUES (?,?,?,?)",
+                idCita, idEnfermedad, idVacuna, fecha);
     }
-    
-    public static void insertarDatosPaciente(String nombre, String cedula, String direccion, String telefono) {
-        Connection conexion = Conexion.obtenerConexion();
-        
 
-        if (conexion != null) {
-            try {
-                String sql = "INSERT INTO Paciente (nombre,cedula,direccion,telefono) VALUES (?,?,?,?)";
-                PreparedStatement statement = conexion.prepareStatement(sql);
-                statement.setString(1, telefono);
-                statement.setString(2, cedula);
-                statement.setString(3, direccion);
-                statement.setString(4, telefono);
-               
-                
-                
-
-                int filasInsertadas = statement.executeUpdate();
-
-                if (filasInsertadas > 0) {
-                    System.out.println("Registro insertado correctamente.");
-                   
-                } else {
-                    System.out.println("No se pudo insertar el registro.");
-                }
-
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            System.out.println("Error al establecer la conexión.");
-        }
-
-        
+    public static boolean insertarDatosPaciente(String nombre, String cedula, String direccion, String telefono) {
+        return ejecutar("INSERT INTO paciente (nombre, cedula, direccion, telefono) VALUES (?,?,?,?)",
+                nombre, cedula, direccion, telefono);
     }
-    
-    public static void insertarDatosUsuario(String identificacion, String clave, String tipoUsuario) {
-        Connection conexion = Conexion.obtenerConexion();
 
-        if (conexion != null) {
-            try {
-                String sql = "INSERT INTO Usuarios (identificacion, clave, tipo_usuario) VALUES (?, ?, ?)";
-                PreparedStatement statement = conexion.prepareStatement(sql);
-
-                statement.setString(1, identificacion);
-                statement.setString(2, clave);
-                statement.setString(3, tipoUsuario);
-
-                int filasInsertadas = statement.executeUpdate();
-
-                if (filasInsertadas > 0) {
-                    System.out.println("Usuario registrado correctamente.");
-                } else {
-                    System.out.println("No se pudo registrar el usuario.");
-                }
-
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            System.out.println("Error al establecer la conexión.");
-        }
+    public static boolean insertarDatosEnfermedad(String nombre, String cronico) {
+        return ejecutar("INSERT INTO enfermedad (nombre, cronico) VALUES (?,?)", nombre, cronico);
     }
-    
- // Método para verificar el inicio de sesión
+
+    public static boolean insertarDatosVacuna(String nombre) {
+        return ejecutar("INSERT INTO vacuna (nombre) VALUES (?)", nombre);
+    }
+
+    public static boolean insertarDatosUsuario(String identificacion, String clave, String tipoUsuario) {
+        return ejecutar("INSERT INTO usuarios (identificacion, clave, tipo_usuario) VALUES (?,?,?)",
+                identificacion, clave, tipoUsuario);
+    }
+
     public static boolean verificarInicioSesion(String identificacion, String clave, String tipoUsuario) {
-        Connection conexion = Conexion.obtenerConexion();
-        boolean inicioSesionCorrecto = false;
-
-        if (conexion != null) {
-            try {
-                String sql = "SELECT * FROM Usuarios WHERE identificacion = ? AND clave = ? AND tipo_usuario = ?";
-                PreparedStatement statement = conexion.prepareStatement(sql);
-
-                statement.setString(1, identificacion);
-                statement.setString(2, clave);
-                statement.setString(3, tipoUsuario);
-
-                ResultSet resultSet = statement.executeQuery();
-
-                if (resultSet.next()) {
-                    inicioSesionCorrecto = true;
-                }
-
-                resultSet.close();
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+        String sql = "SELECT 1 FROM usuarios WHERE identificacion = ? AND clave = ? AND tipo_usuario = ?";
+        try (Connection conexion = Conexion.abrir();
+                PreparedStatement statement = conexion.prepareStatement(sql)) {
+            statement.setString(1, identificacion);
+            statement.setString(2, clave);
+            statement.setString(3, tipoUsuario);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
             }
-        } else {
-            System.out.println("Error al establecer la conexión.");
+        } catch (SQLException e) {
+            registrarError(e);
+            return false;
         }
-
-        return inicioSesionCorrecto;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
+    private static void registrarError(SQLException e) {
+        System.err.println("Error de base de datos: " + e.getMessage());
+    }
+
+    private static boolean ejecutar(String sql, Object... parametros) {
+        try (Connection conexion = Conexion.abrir();
+                PreparedStatement statement = conexion.prepareStatement(sql)) {
+            for (int i = 0; i < parametros.length; i++) {
+                statement.setObject(i + 1, parametros[i]);
+            }
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            registrarError(e);
+            return false;
+        }
+    }
 }

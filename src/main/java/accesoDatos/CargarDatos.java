@@ -1,296 +1,210 @@
 package accesoDatos;
-import javax.swing.*;
-import java.io.File;
-import java.io.PrintWriter;
-import javax.swing.table.DefaultTableModel;
-import java.io.BufferedReader;
-import java.io.IOException;
+
+import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.sql.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+import javax.swing.JComboBox;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ * Operaciones de lectura sobre la base de datos. La mayoría vuelca el
+ * resultado de una consulta directamente en un JTable.
+ */
 public class CargarDatos {
-	
 
-	private static String id_medico;
-	
-	public static void CargarDatosDesdeArchivo(String filepath, JTable tabla) {
-        try {
-       
-            BufferedReader br = new BufferedReader(new FileReader(filepath));
-            String line;
-            
-            DefaultTableModel model = (DefaultTableModel) tabla.getModel();
-            model.setRowCount(0);
-            while ((line = br.readLine()) != null) {
-         
-                String[] campos = line.split("    ");
+    /** Médico que inició sesión (null si el usuario actual no es un médico registrado). */
+    private static String id_medico;
+    private static String nombre_medico;
 
-         
-                if (campos.length >= 4) { 
-                	String cedula = campos[0].trim();
-                    String nombre = campos[1].trim();
-                    String especialidad = campos[2].trim();
-                    String telefono = campos[3].trim();
-
-                    model.addRow(new Object[]{cedula, nombre, especialidad, telefono});
-                }
-            }
-
-       
-            br.close();
-
-  
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-	
-	public static void GuardarDatosEnArchivo(JTable tabla, String filepath) {
-	    try {
-	        DefaultTableModel model = (DefaultTableModel) tabla.getModel();
-	        FileWriter fileWriter = new FileWriter(filepath);
-
-	        for (int i = 0; i < model.getRowCount(); i++) {
-	            String cedula = model.getValueAt(i, 0).toString();
-	            String nombre = model.getValueAt(i, 1).toString();
-	            String especialidad = model.getValueAt(i, 2).toString();
-	            String telefono = model.getValueAt(i, 3).toString();
-
-	            fileWriter.write(cedula + "    " + nombre + "    " + especialidad + "    " + telefono + "\n");
-	        }
-
-	        fileWriter.close();
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-	}
-
-	
-	public static void CargarConsulta(JTable jtable, String tablename) {
-
-		try {
-			
-            Statement stmt = Conexion.obtenerConexion().createStatement();
-
-            String consulta = "SELECT * FROM " + tablename;
-            ResultSet rs = stmt.executeQuery(consulta);
-
-            DefaultTableModel model = new DefaultTableModel();
-            jtable.setModel(model);
-
-            ResultSetMetaData metaDatos = rs.getMetaData();
-            int numColumnas = metaDatos.getColumnCount();
-            for (int i = 1; i <= numColumnas; i++) {
-                model.addColumn(metaDatos.getColumnName(i));
-            }
-
-            while (rs.next()) {
-                Object[] fila = new Object[numColumnas];
-                for (int i = 0; i < numColumnas; i++) {
-                    fila[i] = rs.getObject(i + 1);
-                }
-                model.addRow(fila);
-            }
-
-            rs.close();
-            stmt.close();
-            Conexion.obtenerConexion().close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-		
-		
-	}
-	
-	public static boolean existeRegistro(String cedula) {
-        try {
-            Statement stmt = Conexion.obtenerConexion().createStatement();
-            String consulta = "SELECT * FROM paciente WHERE cedula = '" + cedula + "'";
-            ResultSet rs = stmt.executeQuery(consulta);
-            boolean existe = rs.next();
-            rs.close();
-            stmt.close();
-            Conexion.obtenerConexion().close();
-            return existe;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+    private CargarDatos() {
     }
 
+    public static void CargarConsulta(JTable jtable, String tablename) {
+        llenarTabla(jtable, "SELECT * FROM " + tablename);
+    }
 
-	public static void CargarConsultaEspecifica(JTable jtable, String tablename, String especialidad, String condicion) {
+    public static void CargarConsultaEspecifica(JTable jtable, String tablename, String columna, String condicion) {
+        llenarTabla(jtable, "SELECT * FROM " + tablename + " WHERE " + columna + " = ?", condicion);
+    }
 
-		try {
-			
-			 String consulta = "SELECT * FROM " + tablename + " WHERE " + especialidad + " = ?";
-			PreparedStatement stmt = Conexion.obtenerConexion().prepareStatement(consulta);
-			stmt.setString(1, condicion);
-            ResultSet rs = stmt.executeQuery();
+    /** Citas del médico que inició sesión. La primera columna es el id de la cita. */
+    public static void cargarCitasDelMedico(JTable jtable) {
+        llenarTabla(jtable,
+                "SELECT id_cita, cedula, nombre, telefono, direccion, fecha_cita FROM citas"
+                        + " WHERE id_medico = ? ORDER BY id_cita",
+                id_medico);
+    }
 
-            DefaultTableModel model = new DefaultTableModel();
-            jtable.setModel(model);
+    /** Pacientes (sin repetir) que tienen citas con el médico que inició sesión. */
+    public static void cargarPacientesDelMedico(JTable jtable) {
+        llenarTabla(jtable,
+                "SELECT cedula, MAX(nombre) AS nombre, MAX(telefono) AS telefono, MAX(direccion) AS direccion,"
+                        + " COUNT(*) AS citas FROM citas WHERE id_medico = ? GROUP BY cedula ORDER BY nombre",
+                id_medico);
+    }
 
-            ResultSetMetaData metaDatos = rs.getMetaData();
-            int numColumnas = metaDatos.getColumnCount();
-            for (int i = 1; i <= numColumnas; i++) {
-                model.addColumn(metaDatos.getColumnName(i));
-            }
+    public static void cargarHistorialPaciente(JTable jtable, String cedula) {
+        llenarTabla(jtable,
+                "SELECT co.fecha_consulta AS fecha, m.nombre AS medico, m.especialidad AS especialidad,"
+                        + " e.nombre AS enfermedad, COALESCE(v.nombre, '-') AS vacuna"
+                        + " FROM consulta co"
+                        + " JOIN citas c ON c.id_cita = co.id_cita"
+                        + " JOIN medicos m ON m.id_medico = c.id_medico"
+                        + " JOIN enfermedad e ON e.id_enfermedad = co.id_enfermedad"
+                        + " LEFT JOIN vacuna v ON v.id_vacuna = co.id_vacuna"
+                        + " WHERE c.cedula = ? ORDER BY co.id_consulta DESC",
+                cedula);
+    }
 
+    public static void cargarEnfermedadesCronicasPaciente(JTable jtable, String cedula) {
+        llenarTabla(jtable,
+                "SELECT e.nombre AS enfermedad, MIN(co.fecha_consulta) AS diagnosticada"
+                        + " FROM consulta co"
+                        + " JOIN citas c ON c.id_cita = co.id_cita"
+                        + " JOIN enfermedad e ON e.id_enfermedad = co.id_enfermedad"
+                        + " WHERE c.cedula = ? AND e.cronico = 'Si'"
+                        + " GROUP BY e.id_enfermedad, e.nombre ORDER BY e.nombre",
+                cedula);
+    }
+
+    public static void cargarVacunasPaciente(JTable jtable, String cedula) {
+        llenarTabla(jtable,
+                "SELECT v.nombre AS vacuna, co.fecha_consulta AS fecha"
+                        + " FROM consulta co"
+                        + " JOIN citas c ON c.id_cita = co.id_cita"
+                        + " JOIN vacuna v ON v.id_vacuna = co.id_vacuna"
+                        + " WHERE c.cedula = ? ORDER BY co.id_consulta DESC",
+                cedula);
+    }
+
+    /** Filas de médicos tal como se envían al servidor de respaldo. */
+    public static void cargarMedicosParaRespaldo(JTable jtable) {
+        llenarTabla(jtable, "SELECT cedula, nombre, especialidad, disponibilidad FROM medicos ORDER BY nombre");
+    }
+
+    /** Cantidad de citas por médico, para el gráfico del panel principal. */
+    public static Map<String, Integer> citasPorMedico() {
+        Map<String, Integer> resultado = new LinkedHashMap<>();
+        String sql = "SELECT m.nombre, COUNT(*) AS total FROM citas c"
+                + " JOIN medicos m ON m.id_medico = c.id_medico"
+                + " GROUP BY m.id_medico, m.nombre ORDER BY total DESC";
+        try (Connection conexion = Conexion.abrir();
+                PreparedStatement stmt = conexion.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                Object[] fila = new Object[numColumnas];
-                for (int i = 0; i < numColumnas; i++) {
-                    fila[i] = rs.getObject(i + 1);
+                resultado.put(rs.getString(1), rs.getInt(2));
+            }
+        } catch (SQLException e) {
+            registrarError(e);
+        }
+        return resultado;
+    }
+
+    public static boolean existeRegistro(String cedula) {
+        String sql = "SELECT 1 FROM paciente WHERE cedula = ?";
+        try (Connection conexion = Conexion.abrir();
+                PreparedStatement stmt = conexion.prepareStatement(sql)) {
+            stmt.setString(1, cedula);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            registrarError(e);
+            return false;
+        }
+    }
+
+    /**
+     * Busca al médico cuya cédula coincide con la identificación del usuario
+     * y lo deja como "médico en sesión".
+     */
+    public static void identificarMedico(String cedulamedico) {
+        id_medico = null;
+        nombre_medico = null;
+        String sql = "SELECT id_medico, nombre FROM medicos WHERE cedula = ?";
+        try (Connection conexion = Conexion.abrir();
+                PreparedStatement stmt = conexion.prepareStatement(sql)) {
+            stmt.setString(1, cedulamedico);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    id_medico = rs.getString("id_medico");
+                    nombre_medico = rs.getString("nombre");
                 }
-                model.addRow(fila);
             }
-
-            rs.close();
-            stmt.close();
-            Conexion.obtenerConexion().close();
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            registrarError(e);
         }
-		
-		
-	}
-	
+    }
 
-	
-	public static  void identificarMedico(String cedulamedico) {
-		try {
-			
-            String consulta = "SELECT * FROM medicos WHERE cedula = ?";
-			PreparedStatement stmt = Conexion.obtenerConexion().prepareStatement(consulta);
-			stmt.setString(1, cedulamedico);
-            ResultSet rs = stmt.executeQuery();
-            
-            DefaultTableModel model = new DefaultTableModel();
-            
-
-            ResultSetMetaData metaDatos = rs.getMetaData();
-            int numColumnas = metaDatos.getColumnCount();
-            for (int i = 1; i <= numColumnas; i++) {
-                model.addColumn(metaDatos.getColumnName(i));
-            }
-
+    public static void CargarComboBox(JComboBox<String> combobox) {
+        String sql = "SELECT DISTINCT especialidad FROM medicos ORDER BY especialidad";
+        try (Connection conexion = Conexion.abrir();
+                PreparedStatement stmt = conexion.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-            	id_medico = rs.getString("id_medico");
+                combobox.addItem(rs.getString("especialidad"));
             }
-           
-
-            rs.close();
-            stmt.close();
-            Conexion.obtenerConexion().close();
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            registrarError(e);
         }
-	}
-	
-	
-	
-	public static int EliminarRegistro(String tablename, int id) {
-		try {
-	        Statement stmt = Conexion.obtenerConexion().createStatement();
-            String query = "DELETE FROM " + tablename + " WHERE id_medico=" + id;
-            int filasafectadas = stmt.executeUpdate(query);
-            stmt.close();
-            Conexion.obtenerConexion().close();
+    }
 
-            
-				if (filasafectadas > 0) {
-				
-		            return id;
-		        }
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		   
-		}
-		return -1;
-       
-	}
-	
-	public static void eliminarMedicoDeArchivo(String filepath, String idMedico) {
-	    try {
-	        File file = new File(filepath);
-	        File newFile = new File("medicos_respaldo.txt");
-	        File tempFile = new File(file.getAbsolutePath() + ".tmp");
+    public static String getId_medico() {
+        return id_medico;
+    }
 
-	        BufferedReader br = new BufferedReader(new FileReader(file));
-	        PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
+    public static String getNombre_medico() {
+        return nombre_medico;
+    }
 
-	        String line;
-	        while ((line = br.readLine()) != null) {
-	            String[] campos = line.split("    ");
-	            if (campos.length >= 4) {
-	                String id = campos[0].trim();
-	                if (!id.equals(idMedico)) {
-	                    pw.println(line);
-	                }
-	            }
-	        }
-
-	        br.close();
-	        pw.close();
-
-	        // Renombrar el archivo temporal como el archivo original
-	        if (!file.delete() || !tempFile.renameTo(newFile)) {
-	            throw new IOException("No se pudo eliminar el médico del archivo.");
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-	}
-
-	
-	public static int obtenerIdMedicoDesdeTabla(JTable tabla, int fila) {
-	    DefaultTableModel model = (DefaultTableModel) tabla.getModel();
-	    String idMedicoStr = model.getValueAt(fila, 0).toString();
-	    return Integer.parseInt(idMedicoStr);
-	}
-
-
-	public static void CargarComboBox(JComboBox combobox){
-    	
-        
-        try {
-            String sql = "select especialidad from medicos";
-            Statement stmt = Conexion.obtenerConexion().createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-
-            
-
-            while (rs.next()) {
-                String campo = rs.getString("especialidad");
-                combobox.addItem(campo);
+    /**
+     * Ejecuta la consulta y reemplaza el contenido de la tabla con el resultado.
+     * Los encabezados salen de los nombres (o alias) de las columnas.
+     */
+    private static void llenarTabla(JTable jtable, String sql, Object... parametros) {
+        DefaultTableModel model = new ModeloSoloLectura();
+        try (Connection conexion = Conexion.abrir();
+                PreparedStatement stmt = conexion.prepareStatement(sql)) {
+            for (int i = 0; i < parametros.length; i++) {
+                stmt.setObject(i + 1, parametros[i]);
             }
-
-
-            stmt.close();
+            try (ResultSet rs = stmt.executeQuery()) {
+                ResultSetMetaData metaDatos = rs.getMetaData();
+                int numColumnas = metaDatos.getColumnCount();
+                for (int i = 1; i <= numColumnas; i++) {
+                    model.addColumn(metaDatos.getColumnLabel(i).replace('_', ' ').toUpperCase());
+                }
+                while (rs.next()) {
+                    Object[] fila = new Object[numColumnas];
+                    for (int i = 0; i < numColumnas; i++) {
+                        fila[i] = rs.getObject(i + 1);
+                    }
+                    model.addRow(fila);
+                }
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                Conexion.obtenerConexion().close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            registrarError(e);
         }
- 
-    
-	
-}
+        jtable.setModel(model);
+    }
 
-	public static String getId_medico() {
-		return id_medico;
-	}
-	
+    private static void registrarError(SQLException e) {
+        System.err.println("Error de base de datos: " + e.getMessage());
+    }
 
+    /** Las tablas solo muestran datos: editar una celda no guardaría nada. */
+    private static class ModeloSoloLectura extends DefaultTableModel {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    }
 }
