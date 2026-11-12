@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  compilar:
+    name: Compilar y probar (JDK ${{ matrix.java }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: ['8', '17', '21']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: maven
+      - name: Compilar, probar y empaquetar
+        run: ./mvnw -B verify
+
+  base-de-datos:
+    name: Esquema y datos de demostración en MySQL
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Levantar MySQL con docker compose
+        run: docker compose up -d --wait
+      - name: Comprobar que el esquema y los datos se cargaron
+        run: |
+          consulta() {
+            docker exec clinica-sunny-db mysql -uclinica -pclinica clinicasunny -N -e "$1"
+          }
+          test "$(consulta 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = "clinicasunny"')" = "7"
+          test "$(consulta 'SELECT COUNT(*) FROM usuarios')" = "3"
+          test "$(consulta 'SELECT COUNT(*) FROM medicos')" = "4"
+          test "$(consulta 'SELECT COUNT(*) FROM citas')" = "7"
