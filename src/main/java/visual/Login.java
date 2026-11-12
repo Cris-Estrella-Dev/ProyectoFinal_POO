@@ -1,14 +1,8 @@
 package visual;
 
 import java.awt.BorderLayout;
-import java.io.File;
-import java.io.IOException;
-
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.Toolkit;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -20,6 +14,7 @@ import javax.swing.JRootPane;
 import javax.swing.border.EmptyBorder;
 
 import accesoDatos.CargarDatos;
+import accesoDatos.Conexion;
 import accesoDatos.GuardarDatos;
 
 
@@ -57,9 +52,7 @@ public class Login extends JFrame {
 
 
 	
-		 String fontPath = "/Users/cristianbenelyon/Library/Fonts/GothamBold.ttf";
-		 ImageIcon imageIcon = new ImageIcon("/Users/cristianbenelyon/git/ProyectoFinal_POO/ProyectoFinal_POO/imagenes/LOGIN SCREEN WITHOUT TEXT-08 2-08.png");
-	     Font customFont = loadFontFromFile(fontPath);
+		ImageIcon imageIcon = Recursos.imagen(Recursos.LOGIN);
 		
 		setBackground(new Color(112, 128, 144));
 		setUndecorated(true);
@@ -141,7 +134,7 @@ public class Login extends JFrame {
 		txtClave.setFont(new Font("Dialog", Font.PLAIN, 18));
 		contentPanel.add(txtClave);
 		
-		JButton okButton = new JButton("");
+		JButton okButton = Recursos.zonaClic(new JButton(""));
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				 String identificacion = txtIdentificacion.getText();
@@ -152,13 +145,17 @@ public class Login extends JFrame {
                  if (identificacion.isEmpty() || clave.isEmpty() || cbxTipoUsuario.getSelectedIndex()<=-1 || identificacion.length() != 11) {
                      JOptionPane.showMessageDialog(Login.this, "Todos los campos deben de estar llenos y el campo identificacion debe tener 11 caracteres.", "Error", JOptionPane.ERROR_MESSAGE);
                      return; // Evita continuar con el inicio de sesión si hay campos vacíos.
-                 }else {
-                	  
-                	  tipoUsuario = cbxTipoUsuario.getSelectedItem().toString();
-	                  inicioSesionCorrecto = GuardarDatos.verificarInicioSesion(identificacion, clave, tipoUsuario);
-	                  CargarDatos.identificarMedico(identificacion);
+                 }
 
-				}
+                 String errorConexion = Conexion.probar();
+                 if (errorConexion != null) {
+                     JOptionPane.showMessageDialog(Login.this, Principal.mensajeSinConexion(errorConexion), "Sin conexión a la base de datos", JOptionPane.ERROR_MESSAGE);
+                     return;
+                 }
+
+                 tipoUsuario = cbxTipoUsuario.getSelectedItem().toString();
+                 inicioSesionCorrecto = GuardarDatos.verificarInicioSesion(identificacion, clave, tipoUsuario);
+                 CargarDatos.identificarMedico(identificacion);
 
                 
                  
@@ -189,7 +186,7 @@ public class Login extends JFrame {
 		okButton.setActionCommand("OK");
 		contentPanel.add(okButton);
 		
-		JButton btnRegistrase = new JButton("");
+		JButton btnRegistrase = Recursos.zonaClic(new JButton(""));
 		btnRegistrase.setBounds(490, 266, 117, 46);
 		btnRegistrase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -206,7 +203,7 @@ public class Login extends JFrame {
 		lblNewLabel.setBounds(-6, 0, 707, 395);
 		contentPanel.add(lblNewLabel);
 		
-		btnSalir = new JButton("");
+		btnSalir = Recursos.zonaClic(new JButton(""));
 		btnSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
@@ -230,17 +227,4 @@ public class Login extends JFrame {
 		
 		
 	}
-	
-	public static Font loadFontFromFile(String path) {
-        try {
-            File fontFile = new File(path);
-            return Font.createFont(Font.TRUETYPE_FONT, fontFile);
-        } catch (IOException | FontFormatException e) {
-            e.printStackTrace();
-           
-            return new Font("Arial", Font.PLAIN, 12);
-        }
-    }
-	
-	
 }

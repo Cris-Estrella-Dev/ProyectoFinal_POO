@@ -18,39 +18,21 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+/** Médicos de una especialidad, para elegir con quién se registra la cita. */
 public class ListaEspecialista extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private final JButton okButton;
-	
-	private final String[] columnNames = {"ID", "Nombre", "Cedula", "Especialidad", "Disponibilidad"};
 	private final JTable TablaEspecialidad = new JTable();
-
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			ListaEspecialista dialog = new ListaEspecialista("");
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Create the dialog.
 	 */
-	public ListaEspecialista(String especialidad) {
-		DefaultTableModel model = new DefaultTableModel(null, columnNames);
-		TablaEspecialidad.setModel(model);
+	public ListaEspecialista(final RegistrarCita registrarCita, String especialidad) {
+		super(registrarCita, "Especialistas en " + especialidad, true);
 		setBackground(new Color(112, 128, 144));
-		setTitle("Listar médicos");
 		setBounds(100, 100, 964, 722);
 		getContentPane().setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
@@ -62,65 +44,56 @@ public class ListaEspecialista extends JDialog {
 		panel.setBounds(6, 6, 952, 643);
 		contentPanel.add(panel);
 		panel.setLayout(null);
-		TablaEspecialidad.setBounds(17, 18, 907, 607);
-		
-		panel.add(TablaEspecialidad);
+
 		JTableHeader header = TablaEspecialidad.getTableHeader();
-        header.setFont(new Font("Arial", Font.BOLD, 12)); 
-        header.setEnabled(false);
-        header.setBackground(Color.DARK_GRAY); 
-        header.setForeground(Color.WHITE); 
+        header.setFont(new Font("Arial", Font.BOLD, 12));
+        header.setBackground(Color.DARK_GRAY);
+        header.setForeground(Color.WHITE);
         DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) TablaEspecialidad.getTableHeader().getDefaultRenderer();
         renderer.setHorizontalAlignment(JLabel.CENTER);
-		 JScrollPane scrollPane = new JScrollPane(TablaEspecialidad);
-		 TablaEspecialidad.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-		 scrollPane.setEnabled(false);
-	        scrollPane.setBounds(17, 18, 907, 606);
-	        panel.add(scrollPane);
+		JScrollPane scrollPane = new JScrollPane(TablaEspecialidad);
+		TablaEspecialidad.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		scrollPane.setBounds(17, 18, 907, 606);
+		panel.add(scrollPane);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				okButton = new JButton("OK");
+				okButton = new JButton("Seleccionar");
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
-				JButton cancelButton = new JButton(especialidad);
+				JButton cancelButton = new JButton("Cancelar");
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
 		}
-		
+
 		okButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        int selectedRow = TablaEspecialidad.getSelectedRow();
 		        if (selectedRow != -1) {
-		            // Obtener la información de la fila seleccionada
-		            Integer idInteger = (Integer) TablaEspecialidad.getValueAt(selectedRow, 0);
-		            String id = idInteger.toString();
-
+		            String id = TablaEspecialidad.getValueAt(selectedRow, 0).toString();
 		            String nombre = (String) TablaEspecialidad.getValueAt(selectedRow, 1);
 
-		            // Mostrar la información en el otro JDialog "InfoMedicoDialog"
-		            RegistrarCita dialog = new RegistrarCita();
-		           dialog.agregardatostextbox(id, nombre);
-		           dialog.setVisible(true);
-		           dispose();
+		            registrarCita.agregardatostextbox(id, nombre);
+		            dispose();
 		        } else {
-		            // Si no se seleccionó ninguna fila, muestra un mensaje de error o realiza alguna otra acción
-		            JOptionPane.showMessageDialog(null, "Por favor, seleccione un médico de la tabla.");
+		            JOptionPane.showMessageDialog(ListaEspecialista.this, "Por favor, seleccione un médico de la tabla.");
 		        }
 		    }
 		});
 
-		
-		
 		CargarDatos.CargarConsultaEspecifica(TablaEspecialidad, "medicos", "especialidad", especialidad);
-		
+
 	}
 
 }

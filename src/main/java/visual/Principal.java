@@ -1,19 +1,18 @@
 package visual;
+import accesoDatos.CargarDatos;
 import accesoDatos.Conexion;
+import accesoDatos.MiServidor;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.Image;
 import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
-
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -23,17 +22,9 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-import java.awt.event.ActionEvent;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.util.Map;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -43,15 +34,17 @@ import org.jfree.data.general.DefaultPieDataset;
 
 public class Principal extends JFrame {
 
+	/** Tamaño para el que se diseñó la pantalla principal. */
+	private static final int ANCHO_DISENO = 1728;
+	private static final int ALTO_DISENO = 1105;
+
 	private JPanel contentPane;
 	private RegistrarCita registrarCita;
 	private RegistrarMedico registrarMedico;
 	private PerfilMedico perfilMedico;
-	private HistorialPaciente historialPaciente;
 	private RegistrarEnfermedades registrarEnfermedades;
 	private RegistrarVacunas registrarVacunas;
 	private Login login;
-	private RegistrarUsuario registrarUsuario;
 	private JPanel panelRegCita;
 	private JPanel panelPaciente;
 	private JPanel panelRegEnfermedad;
@@ -67,18 +60,31 @@ public class Principal extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		// El servidor de respaldo vive dentro de la aplicación; si el puerto ya
+		// está ocupado es porque se está ejecutando por separado.
+		MiServidor.iniciarEnSegundoPlano();
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					Login login = new Login();
-					login.setUndecorated(true);
 					login.setVisible(true);
-					 
+
+					String errorConexion = Conexion.probar();
+					if (errorConexion != null) {
+						JOptionPane.showMessageDialog(login, mensajeSinConexion(errorConexion), "Sin conexión a la base de datos", JOptionPane.WARNING_MESSAGE);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
+	}
+
+	static String mensajeSinConexion(String detalle) {
+		return "No se pudo conectar a la base de datos:\n" + Conexion.getUrl() + "\n\n"
+				+ "Inicie la base de datos con \"docker compose up -d\" e intente de nuevo.\n\n"
+				+ "Detalle: " + detalle;
 	}
 
 	
@@ -88,10 +94,8 @@ public class Principal extends JFrame {
 	 */
 	public Principal(String tipoUsuario) {
 		this.tipoUsuarioActual = tipoUsuario;
-		String fontPath = "/Users/cristianbenelyon/Library/Fonts/GothamBold.ttf";
-		ImageIcon imageIconMainPage = new ImageIcon("/Users/cristianbenelyon/git/ProyectoFinal_POO/ProyectoFinal_POO/imagenes/MAIN SCREEN CON ICONOS-13.png");
-		ImageIcon imageIconMenu = new ImageIcon("/Users/cristianbenelyon/git/ProyectoFinal_POO/ProyectoFinal_POO/imagenes/MENU 12782124-14.png");
-	    Font customFont = loadFontFromFile(fontPath);
+		ImageIcon imageIconMainPage = Recursos.imagen(Recursos.PRINCIPAL);
+		ImageIcon imageIconMenu = Recursos.imagen(Recursos.MENU);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		setBounds(100, 100, 1728, 1105);
 		setLocationRelativeTo(null);
@@ -108,25 +112,18 @@ public class Principal extends JFrame {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int screenWidth = screenSize.width;
         int screenHeight = screenSize.height;
-        
-       
-        
-       
-        Connection conexion = Conexion.obtenerConexion();
-
-        
-        int getnumber = perfilMedico.TablaCitasDelMedico.getRowCount();
-        
 
         setBounds(0, 0, screenWidth, screenHeight);
 
-		setContentPane(contentPane);
+		// En pantallas más pequeñas que el diseño aparecen barras de
+		// desplazamiento en lugar de quedar parte del menú fuera de alcance.
+		contentPane.setPreferredSize(new Dimension(ANCHO_DISENO, ALTO_DISENO));
+		JScrollPane scroll = new JScrollPane(contentPane);
+		scroll.setBorder(null);
+		scroll.getVerticalScrollBar().setUnitIncrement(16);
+		setContentPane(scroll);
 		
-		registrarUsuario= new RegistrarUsuario();
 		registrarCita = new RegistrarCita();
-		registrarMedico = new RegistrarMedico();
-		perfilMedico = new PerfilMedico();
-		historialPaciente = new HistorialPaciente();
 		registrarEnfermedades = new RegistrarEnfermedades();
 		registrarVacunas =  new RegistrarVacunas();
 		login = new Login();
@@ -317,6 +314,8 @@ public class Principal extends JFrame {
 		
 					panelRegMedico.setVisible(false);
 					panelListarMedico.setVisible(false);
+					// Se crea al abrirlo para que muestre las citas más recientes.
+					perfilMedico = new PerfilMedico();
 					perfilMedico.setModal(true);
 					perfilMedico.setVisible(true);
 				}else {
@@ -355,9 +354,10 @@ public class Principal extends JFrame {
 		panelRegMedico.setBackground(new java.awt.Color(0,0,0,1));
 		panelRegMedico.setVisible(false);
 		
-		JLabel lblNewLabel_2_1 = new JLabel("REGISTRAR MEDICO");
+		// En dos líneas: el menú mide 351 px de ancho y el texto completo se cortaba.
+		JLabel lblNewLabel_2_1 = new JLabel("<html>REGISTRAR<br>MEDICO</html>");
 		lblNewLabel_2_1.setForeground(Color.WHITE);
-		lblNewLabel_2_1.setBounds(6, 24, 128, 16);
+		lblNewLabel_2_1.setBounds(6, 16, 100, 34);
 		panelRegMedico.add(lblNewLabel_2_1);
 		
 		panelListarMedico = new JPanel();
@@ -379,9 +379,9 @@ public class Principal extends JFrame {
 		panelListarMedico.setBackground(new java.awt.Color(0,0,0,1));
 		panelListarMedico.setVisible(false);
 		
-		JLabel lblNewLabel_2_2 = new JLabel("LISTAR MEDICOS");
+		JLabel lblNewLabel_2_2 = new JLabel("<html>LISTAR<br>MEDICOS</html>");
 		lblNewLabel_2_2.setForeground(Color.WHITE);
-		lblNewLabel_2_2.setBounds(6, 24, 114, 16);
+		lblNewLabel_2_2.setBounds(6, 10, 100, 34);
 		panelListarMedico.add(lblNewLabel_2_2);
 		
 		JLabel lblNewLabel_7 = new JLabel(imageIconMenu);
@@ -393,9 +393,11 @@ public class Principal extends JFrame {
 		lblNewLabel_1.setBounds(345, 6, 1430, 1126);
 		contentPane.add(lblNewLabel_1);
 		
-		JPanel panelGraficoPastel = new JPanel();
+		JPanel panelGraficoPastel = new JPanel(new BorderLayout());
 		panelGraficoPastel.setBounds(448, 586, 750, 348);
 		contentPane.add(panelGraficoPastel);
+		// El gráfico va por encima de la imagen de fondo.
+		contentPane.setComponentZOrder(panelGraficoPastel, 0);
 		
 		if (tipoUsuarioActual.equals("Admin")) {
             deshabilitarComponentes(panelRegCita);
@@ -413,35 +415,32 @@ public class Principal extends JFrame {
             deshabilitarComponentes(panelRespaldo);
         }
 		
-		DefaultPieDataset dataset = new DefaultPieDataset();
-
-
-	
-
-				JFreeChart chart = ChartFactory.createPieChart(
-		        "Medico más visitado",  
-		        dataset,                
-		        true,                   
-		        true,                
-		        false                   
-		);
-		
-		int numDataPoints = 15; 
-		for (int i = 0; i < numDataPoints; i++) {
-		    int value = getRandomNumber(1, 10); 
-		    String name = getRandomName(); 
-		    dataset.setValue(name, value);
+		// Citas registradas por médico.
+		DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
+		for (Map.Entry<String, Integer> medico : CargarDatos.citasPorMedico().entrySet()) {
+			dataset.setValue(medico.getKey(), medico.getValue());
 		}
 
+		JFreeChart chart = ChartFactory.createPieChart(
+		        "Médicos más visitados",
+		        dataset,
+		        true,
+		        true,
+		        false
+		);
+
 		// Personaliza el gráfico
-		PiePlot plot = (PiePlot) chart.getPlot();
+		PiePlot<?> plot = (PiePlot<?>) chart.getPlot();
 		plot.setLabelFont(new Font("SansSerif", Font.PLAIN, 12));
 		plot.setNoDataMessage("No hay datos para mostrar");
 		plot.setCircular(true); // Gráfico circular
+		plot.setBackgroundPaint(Color.WHITE);
+		plot.setOutlineVisible(false);
+		plot.setShadowPaint(null);
 
 		ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new java.awt.Dimension(750, 348));
-		panelGraficoPastel.add(chartPanel);
+		panelGraficoPastel.add(chartPanel, BorderLayout.CENTER);
 	
 	}
 	
@@ -465,24 +464,6 @@ public class Principal extends JFrame {
 	        component.setEnabled(false); 
 	    }
 	   
-	}
-	public static Font loadFontFromFile(String path) {
-        try {
-            File fontFile = new File(path);
-            return Font.createFont(Font.TRUETYPE_FONT, fontFile);
-        } catch (IOException | FontFormatException e) {
-            e.printStackTrace();
-           
-            return new Font("Arial", Font.PLAIN, 12);
-        }
-    }
-	private String getRandomName() {
-	    String[] names = { "Cristian", "Nawel", "Juan", "María", "Luis", "Ana", "Pedro", "Laura", "Carlos", "Sofía" };
-	    int randomIndex = getRandomNumber(0, names.length - 1);
-	    return names[randomIndex];
-	}
-	private int getRandomNumber(int min, int max) {
-	    return (int) (Math.random() * (max - min + 1) + min);
 	}
 
 }

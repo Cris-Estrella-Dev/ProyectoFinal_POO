@@ -1,41 +1,32 @@
 package visual;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import java.awt.Color;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.border.EmptyBorder;
 
+import accesoDatos.CargarDatos;
+
+/** Vacunas que se le han aplicado a un paciente. */
 public class ListarVacunasPaciente extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private final JTable tablaVacunasPaciente = new JTable();
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			ListarVacunasPaciente dialog = new ListarVacunasPaciente();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Create the dialog.
 	 */
-	public ListarVacunasPaciente() {
-		setTitle("Vacunas del paciente");
+	public ListarVacunasPaciente(Window owner, String cedula) {
+		super(owner, "Vacunas del paciente", ModalityType.APPLICATION_MODAL);
 		setBounds(100, 100, 964, 679);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
@@ -43,8 +34,9 @@ public class ListarVacunasPaciente extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
-		tablaVacunasPaciente.setBounds(24, 21, 921, 568);
-		contentPanel.add(tablaVacunasPaciente);
+		JScrollPane scrollPane = new JScrollPane(tablaVacunasPaciente);
+		scrollPane.setBounds(24, 21, 921, 568);
+		contentPanel.add(scrollPane);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -54,15 +46,14 @@ public class ListarVacunasPaciente extends JDialog {
 				btnSalir.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						dispose();
-						HistorialPaciente historialPaciente =  new HistorialPaciente();
-						historialPaciente.setModal(true);
-						historialPaciente.setVisible(true);
 					}
 				});
 				btnSalir.setActionCommand("Cancel");
 				buttonPane.add(btnSalir);
+				getRootPane().setDefaultButton(btnSalir);
 			}
 		}
+		CargarDatos.cargarVacunasPaciente(tablaVacunasPaciente, cedula);
 	}
 
 }
